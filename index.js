@@ -42,7 +42,7 @@ app.post('/webhook/', function (req, res) {
 		}
 		if (event.postback) {
 			let text = JSON.stringify(event.postback)
-			sendTextMessage(sender, "Postback received: "+text.substring(0, 200), token)
+			sendTextMessage(sender, event.postback.payload, token)
 			continue
 		}
 	}
@@ -81,17 +81,17 @@ function sendGenericMessage(sender) {
 			"payload": {
 				"template_type": "generic",
 				"elements": [{
-					"title": "First card",
-					"subtitle": "Element #1 of an hscroll",
+					"title": "AT&T Products",
+					"subtitle": "TestTry",
 					"image_url": "http://messengerdemo.parseapp.com/img/rift.png",
 					"buttons": [{
 						"type": "web_url",
-						"url": "https://www.messenger.com",
-						"title": "web url"
+						"url": "https://www.att.com/global-search/search.jsp?App_ID=HOME&autoSuggest=FALSE&tabPressed=FALSE&q=iPhone&%3Acq_csrf_token=undefined#!/All/",
+						"title": "iPhones"
 					}, {
 						"type": "postback",
-						"title": "Postback",
-						"payload": "Payload for first element in a generic bubble",
+						"title": "Wireless",
+						"payload": "What device would you like help with?",
 					}],
 				}, {
 					"title": "Second card",
