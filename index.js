@@ -50,7 +50,12 @@ app.post('/webhook/', function (req, res) {
     }
     if (event.postback) {
       let text = JSON.stringify(event.postback)
-      sendTextMessage(sender, event.postback.payload, token)
+      var postback_payload = event.postback.payload;
+      if(postback_payload == 'ATT Services'){
+        sendATTMessage(sender);
+      }else{
+        sendTextMessage(sender, event.postback.payload, token)
+      }
       continue
     }
   }
