@@ -3,6 +3,7 @@
 const express = require('express')
 const bodyParser = require('body-parser')
 const request = require('request')
+var https = require('https');
 const app = express()
 
 app.set('port', (process.env.PORT || 5000))
@@ -49,10 +50,15 @@ app.post('/webhook/', function (req, res) {
       sendTextMessage(sender, "Text received, echo: " + text.substring(0, 200))
     }
     if (event.postback) {
-      let text = JSON.stringify(event.postback)
-      sendTextMessage(sender, event.postback.payload, token)
-      continue
-    }
+          let text = JSON.stringify(event.postback)
+          var postback_payload = event.postback.payload;
+          if(postback_payload == 'ATT Services'){
+            sendATTMessage(sender);
+          }else{
+            sendTextMessage(sender, event.postback.payload, token)
+          }
+          continue
+        }
   }
   res.sendStatus(200)
 })
@@ -135,7 +141,33 @@ function sendGenericMessage(sender) {
 
 
 function sendATTMessage(sender) {
+   var options = {
+    host: 'www.att.com',
+    path: '/global-search/gsLayer.jsp?q=*:*&core=GlobalSearch&handler=lucid&role=DEFAULT&start=0&rows=0&user=admin&indent=true&role=DEFAULT&facet=true&facet.field=navigationTree&facet.mincount=1&facet.limit=-1&wt=json',
+    method: 'GET',
+    headers: {'Accept': 'application/json'}
+  };
+
+  var req = https.request(options, function(res) {
+    res.setEncoding('utf-8');
+
+    var responseString = '';
+
+    res.on('data', function(data) {
+      responseString += data;
+      console.log("Passed");
+    });
+
+    res.on('end', function() {
+      var responseObject = JSON.parse(responseString);
+      var str = JSON.stringify(responseObject.facet_counts.facet_fields.navigationTree);
+      var prod1=str.match(/Wireless/g)[0];
+      var prod2=str.match(/TV/g)[0];
+      var prod3=str.match(/Digital Life/g)[0];
+      var prod4=str.match(/Internet/g)[0];
+      
   let messageData = {
+
     "attachment": {
       "type": "template",
       "payload": {
@@ -145,22 +177,36 @@ function sendATTMessage(sender) {
           "subtitle": "What can we help you with today?",
           "image_url": "http://cdn.bgr.com/2015/12/att-logo-globe.png",
           "buttons": [{
-            "type": "web_url",
-            "url": "https://www.att.com/olam/showSLIDOverviewAction.myworld",
-            "title": "Usage"
+            "type": "postback",
+            "title": prod1,
+            "payload": "What device would you like help with?",
           }, {
             "type": "web_url",
-            "title": "Television",
+            "title": prod2,
             "url": "https://www.att.com/tv/",
           }, {
-            "type": "postback",
-            "title": "Wireless",
-            "payload": "What device would you like help with?",
+            "type": "web_url",
+            "title": prod3,
+            "url": "https://my-digitallife.att.com/learn/home-security-and-automation",
+          }],
+        }, {
+          "title": "Welcome to the AT&T Support Messenger Bot.",
+          "subtitle": "What can we help you with today?",
+          "image_url": "http://cdn.bgr.com/2015/12/att-logo-globe.png",
+          "buttons": [{
+            "type": "web_url",
+            "title": prod4,
+            "url": "https://www.att.com/internet/",
+            }, {
+            "type": "web_url",
+            "title": "Bundles",
+            "url": "https://www.att.com/bundles/",
           }],
         }]
       }
     }
   }
+
   request({
     url: 'https://graph.facebook.com/v2.6/me/messages',
     qs: {access_token:token},
@@ -168,14 +214,17 @@ function sendATTMessage(sender) {
     json: {
       recipient: {id:sender},
       message: messageData,
-    }
-  }, function(error, response, body) {
+    } 
+}, function(error, response, body) {
     if (error) {
       console.log('Error sending messages: ', error)
     } else if (response.body.error) {
       console.log('Error: ', response.body.error)
     }
   })
+  });
+  });
+  req.end();
 }
 
 function sendSecondCard(sender) {
