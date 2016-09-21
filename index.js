@@ -16,7 +16,7 @@ app.use(bodyParser.json())
 
 // index
 app.get('/', function (req, res) {
-  res.send('hello world i am a secret bot')
+  res.send('Hello world I am a secret bot!')
 })
 
 // for facebook verification
@@ -29,29 +29,39 @@ app.get('/webhook/', function (req, res) {
 
 // to post data
 app.post('/webhook/', function (req, res) {
+
   let messaging_events = req.body.entry[0].messaging
   for (let i = 0; i < messaging_events.length; i++) {
     let event = req.body.entry[0].messaging[i]
     let sender = event.sender.id
     if (event.message && event.message.text) {
       let text = event.message.text
-      if (text === 'Generic') {
+      var elements="Samsung|HTC|Apple|LG|Kyocera|Microsoft|AT&T";
+      var arraytry="(" + elements + ")";
+      var regex = new RegExp(arraytry + ".*", "gi");
+      console.log(regex);
+      //var matching=text.match(/\bSamsung.*\b|Apple.*\b|HTC.*\b|Kyocera.*\b|LG.*\b|AT&T.*\b/gi);
+      //var match2=text.match(/(Samsung|Apple|HTC|LG|Kyocera|Microsoft).*/gi);
+      var match3=text.match(regex);
+      //console.log(matches);
+      
+      /*if (text === 'Generic') {
         sendGenericMessage(sender)
         continue
-      }
+      }*/
       if (text === 'ATT Services') {
         sendATTMessage(sender)
         continue
       }
-      if (text === 'Samsung Galaxy S7' || text === 'Apple iPhone 6s') {
+      if (text == match3) {
         sendSecondCard(sender)
         continue
       }
       sendTextMessage(sender, "Text received, echo: " + text.substring(0, 200))
     }
     if (event.postback) {
-          let text = JSON.stringify(event.postback)
-          var postback_payload = event.postback.payload;
+      let text = JSON.stringify(event.postback)
+      var postback_payload = event.postback.payload;
           if(postback_payload == 'ATT Services'){
             sendATTMessage(sender);
           }else{
@@ -62,8 +72,6 @@ app.post('/webhook/', function (req, res) {
   }
   res.sendStatus(200)
 })
-
-
 // recommended to inject access tokens as environmental variables, e.g.
 // const token = process.env.PAGE_ACCESS_TOKEN
 const token = "EAACmDQA9zBEBAHX5fUJZCqpAwxSbGziXqBcEjTFDm6EfrEYJXZCxiZBNzL5M252qIV0SWZAmNH7in53glS0wyaDyb6dAzs5daShHN2DrGrdFHSDd4VpD1kkDfIxSbOlKRyfwWsKZB2tBfhAU946N0oZBCIF6IZAcYjAl8gUqEtV9FvaF4SFkwRR"
@@ -90,7 +98,7 @@ function sendTextMessage(sender, text) {
   })
 }
 
-function sendGenericMessage(sender) {
+/*function sendGenericMessage(sender) {
   let messageData = {
     "attachment": {
       "type": "template",
@@ -138,7 +146,7 @@ function sendGenericMessage(sender) {
     }
   })
 }
-
+*/
 
 function sendATTMessage(sender) {
    var options = {
@@ -239,12 +247,33 @@ function sendSecondCard(sender) {
           //"image_url": "http://messengerdemo.parseapp.com/img/rift.png",
           "buttons": [{
             "type": "web_url",
-            "url": "https://www.messenger.com",
+            "url": "https://www.att.com/esupport/article.html#!/wireless/KM1008625",
             "title": "View your current bill online"
           }, {
             "type": "web_url",
             "title": "Unlocking phone or tablet",
-            "url": "https://www.messenger.com",
+            "url": "https://www.att.com/esupport/article.html#!/wireless/KM1008728",
+            }, {
+            "type": "web_url",
+            "title": "Managing mobile purchases and subscriptions",
+            "url": "https://www.att.com/esupport/article.html#!/wireless/KM1009396",
+          }],
+          }, {
+          "title": "Thank You! Popular solutions are:",
+          "subtitle": "",
+          //"image_url": "http://cdn.bgr.com/2015/12/att-logo-globe.png",
+          "buttons": [{
+            "type": "web_url",
+            "title": "Canceling wireless service or removing a line",
+            "url": "https://www.att.com/esupport/article.html#!/wireless/KM1008472",
+            }, {
+            "type": "web_url",
+            "title": "Refilling your GoPhone account balance",
+            "url": "https://www.att.com/esupport/article.html#!/wireless/KM1008656",
+            }, {
+            "type": "web_url",
+            "title": "I'm looking for something else",
+            "url": "https://www.att.com/",
           }],
         }]
       }
