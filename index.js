@@ -30,15 +30,62 @@ app.get('/webhook/', function (req, res) {
 // to post data
 app.post('/webhook/', function (req, res) {
 
+  var manufacturers = {
+    host: 'www.att.com',
+    path: '/global-search/gsLayer.jsp?core=GlobalSearch&handler=lucid&role=DEFAULT&q=*:*&facet=false&hl=false&fl=title,manufacturerEscaped&rows=100000&role=DEFAULT&fq=productType:Device&facet.limit=-1&hl=false',
+    method: 'GET',
+    headers: {'Accept': 'application/json'}
+  };
+
+  var req1 = https.request(manufacturers, function(res1) {
+    res1.setEncoding('utf-8');
+
+    var responseString1 = '';
+
+    res1.on('data', function(data) {
+      responseString1 += data;
+      console.log("Passed");
+    });
+
+    res1.on('end', function() {
+      var responseObject1 = JSON.parse(responseString1);
+      //console.log(responseObject);
+      var str1 = JSON.stringify(responseObject1.response.docs);
+      var mf=responseObject1.response.docs;
+      var titlearray=[];
+      for (var l in mf){
+        var tmparray= mf[l];
+        //console.log(tmparray.manufacturerEscaped);
+        titlearray.push(tmparray.manufacturerEscaped[0]);
+        
+      }
+      //console.log(titlearray);
+
+      var unique = titlearray.filter(function(elem, index, self) {
+    return index == self.indexOf(elem);
+
+})
+
+      var stringify=JSON.stringify(unique);
+      var brackets=stringify.split(/[\{\[]/).join('(').split(/[\}\]]/).join(')');
+      var quotes=brackets.replace(/"/g, "");
+      var pipe=quotes.replace(/,/g, "|");
+      var ampreplace=pipe.replace(/&amp;/g, "&");
+
+      //console.log(stringify.split(/[\{\[]/).join('(').split(/[\}\]]/).join(')'));
+      console.log(ampreplace);
+     
+
+
   let messaging_events = req.body.entry[0].messaging
   for (let i = 0; i < messaging_events.length; i++) {
     let event = req.body.entry[0].messaging[i]
     let sender = event.sender.id
     if (event.message && event.message.text) {
       let text = event.message.text
-      var elements="Samsung|HTC|Apple|LG|Kyocera|Microsoft|AT&T";
-      var arraytry="(" + elements + ")";
-      var regex = new RegExp(arraytry + ".*", "gi");
+      //var elements="Samsung|HTC|Apple|LG|Kyocera|Microsoft|AT&T";
+      //var arraytry="(" + elements + ")";
+      var regex = new RegExp(ampreplace + ".*", "gi");
       console.log(regex);
       //var matching=text.match(/\bSamsung.*\b|Apple.*\b|HTC.*\b|Kyocera.*\b|LG.*\b|AT&T.*\b/gi);
       //var match2=text.match(/(Samsung|Apple|HTC|LG|Kyocera|Microsoft).*/gi);
@@ -71,7 +118,15 @@ app.post('/webhook/', function (req, res) {
         }
   }
   res.sendStatus(200)
+   });
+  });
+
+  req1.end();
+
 })
+     
+   
+
 // recommended to inject access tokens as environmental variables, e.g.
 // const token = process.env.PAGE_ACCESS_TOKEN
 const token = "EAACmDQA9zBEBAHX5fUJZCqpAwxSbGziXqBcEjTFDm6EfrEYJXZCxiZBNzL5M252qIV0SWZAmNH7in53glS0wyaDyb6dAzs5daShHN2DrGrdFHSDd4VpD1kkDfIxSbOlKRyfwWsKZB2tBfhAU946N0oZBCIF6IZAcYjAl8gUqEtV9FvaF4SFkwRR"
@@ -98,58 +153,13 @@ function sendTextMessage(sender, text) {
   })
 }
 
-/*function sendGenericMessage(sender) {
-  let messageData = {
-    "attachment": {
-      "type": "template",
-      "payload": {
-        "template_type": "generic",
-        "elements": [{
-          "title": "First card",
-          "subtitle": "Element #1 of an hscroll",
-          "image_url": "http://messengerdemo.parseapp.com/img/rift.png",
-          "buttons": [{
-            "type": "web_url",
-            "url": "https://www.messenger.com",
-            "title": "web url"
-          }, {
-            "type": "postback",
-            "title": "Postback",
-            "payload": "Payload for first element in a generic bubble",
-          }],
-        }, {
-          "title": "Second card",
-          "subtitle": "Element #2 of an hscroll",
-          "image_url": "http://messengerdemo.parseapp.com/img/gearvr.png",
-          "buttons": [{
-            "type": "postback",
-            "title": "Postback",
-            "payload": "Payload for second element in a generic bubble",
-          }],
-        }]
-      }
-    }
-  }
-  request({
-    url: 'https://graph.facebook.com/v2.6/me/messages',
-    qs: {access_token:token},
-    method: 'POST',
-    json: {
-      recipient: {id:sender},
-      message: messageData,
-    }
-  }, function(error, response, body) {
-    if (error) {
-      console.log('Error sending messages: ', error)
-    } else if (response.body.error) {
-      console.log('Error: ', response.body.error)
-    }
-  })
-}
-*/
+
 
 function sendATTMessage(sender) {
-   var options = {
+  
+     
+      
+ var options = {
     host: 'www.att.com',
     path: '/global-search/gsLayer.jsp?q=*:*&core=GlobalSearch&handler=lucid&role=DEFAULT&start=0&rows=0&user=admin&indent=true&role=DEFAULT&facet=true&facet.field=navigationTree&facet.mincount=1&facet.limit=-1&wt=json',
     method: 'GET',
