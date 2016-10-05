@@ -5,10 +5,14 @@ const bodyParser = require('body-parser')
 const request = require('request')
 var https = require('https');
 var zipcode=/(^\d{5}$)|(^\d{5}-\d{4}$)/g;
-var address, name , originlat , originlong, nearestlat, nearestlong, address1, address2, zip, fulladdress, distance, c, addressC, addressC2 , addressall, zipc, storeaddress, comment;
+var address, name , originlat , originlong, nearestlat, nearestlong, address1, address2, zip, fulladdress, distance, c, addressC, addressC2 , addressall, zipc, storeaddress, newline, phone,hours, phone1,hours1;
 var fulladdressC=[];
 var addressarray=[];
+var phonearray=[];
+var timearray=[];
+//global.navigator=window.navigator;
 const app = express()
+
 
 app.set('port', (process.env.PORT || 5000))
 
@@ -66,12 +70,14 @@ var attachment;
 
       }
       
-
+//console.log(namearray);
       var unique = titlearray.filter(function(elem, index, self) {
     return index == self.indexOf(elem);
 
 })
-      
+      //var isWin = /^win/.test(process.platform=== 'win32');
+      //console.log("Checking Platform");
+      //console.log(isWin);
       var stringify=JSON.stringify(unique);
       var brackets=stringify.split(/[\{\[]/).join('(').split(/[\}\]]/).join(')');
       var quotes=brackets.replace(/"/g, "");
@@ -89,7 +95,6 @@ var attachment;
   for (let i = 0; i < messaging_events.length; i++) {
     let event = req.body.entry[0].messaging[i]
     let sender = event.sender.id
-    //Location Services : Mobile-Device only
     /*if (event.message && event.message.attachments && event.message.attachments.length > 0) {
                 attachment = event.message.attachments[0];
                 //console.log(attachment.payload.coordinates.lat);
@@ -114,11 +119,7 @@ var attachment;
       var match4=text.match(regex1);
       var zipmatch=text.match(zipcode);
       
-      
-      
-      
-      
-      if (text === 'ATT Services') {
+       if (text === 'ATT Services') {
         sendATTMessage(sender)
         continue
       }
@@ -138,8 +139,12 @@ var attachment;
       var postback_payload = event.postback.payload;
           if(postback_payload == 'ATT Services'){
             sendATTMessage(sender);
-          } else if(postback_payload == 'Ok.Take a look at other options below:' ){
+          }
+ else if(postback_payload == 'Ok.Take a look at other options below:' ){
               OptionButtonCard(sender);
+          }
+          else if(postback_payload == 'Further Assistance'){
+            QuickReply(sender);
           }
     else{
             sendTextMessage(sender, event.postback.payload, token)
@@ -154,6 +159,7 @@ var attachment;
   req1.end();
 
 })
+
      
    
 
@@ -217,18 +223,18 @@ function sendStoreLocator(sender ,zip) {
       
       console.log(count);
       
-      /*if(count=0){
-            console.log(count);
-            sendTextMessage(sender, 'Sorry , no matches found!.');
-        }*/
-      
-      if(count>0){
+      if(!count>0){
+       sendTextMessage(sender, "Sorry!I was not able to locate any store near " + str + "! Please check the zipcode you have entered or try a different zipcode!")
+      }
+      else{
+        
       name=responseObject.results[0].name;
       originlat=responseObject.origin.lat;
       originlong=responseObject.origin.lon;
       nearestlat=responseObject.results[0].lat;
       nearestlong=responseObject.results[0].lon;
       address1= responseObject.results[0].address1;
+
       
    if(responseObject.results[0].address2){
         address2=responseObject.results[0].address2;
@@ -242,11 +248,15 @@ function sendStoreLocator(sender ,zip) {
       
     zip= responseObject.results[0].city + "," + responseObject.results[0].region + "," + responseObject.results[0].postal;
       
-    fulladdress= address + "," + zip;
+    fulladdress= address + "," + zip + ".";
     distance= responseObject.results[0].arcdist;
+    phone1= responseObject.results[0].phone;
+  hours1=responseObject.results[0].hours;
 
     for( c=1; c<=count-1; c++){
   addressC= responseObject.results[c].address1;
+  phone= responseObject.results[c].phone;
+  hours=responseObject.results[c].hours;
   if(responseObject.results[c].address2){
   addressC2=responseObject.results[c].address2;
   addressall=addressC + "," + addressC2;
@@ -255,32 +265,36 @@ function sendStoreLocator(sender ,zip) {
      addressall= addressC;
   }
   zipc= responseObject.results[c].city + "," + responseObject.results[c].region + "," + responseObject.results[c].postal;
-  storeaddress= addressall + "," + zipc; 
-  
+  storeaddress= addressall + "," + zipc + "."; 
   
   fulladdressC.push(storeaddress); 
+  phonearray.push(phone);
+  timearray.push(hours);
   
-  
-  }}
-
-
-
-  
-
-  if(fulladdressC.length>=5){
-
-    fulladdressC=fulladdressC.slice(0,5);
-    console.log(fulladdressC);
-}
-    else if(fulladdressC.length>0 && fulladdressC.length<5){
-      fulladdressC=fulladdressC.slice(0,fulladdressC.length);
-      console.log(fulladdressC.length);
-      console.log(fulladdressC);
-
   
   }
 
 
+if(fulladdressC.length>=5){
+
+    fulladdressC=fulladdressC.slice(0,5);
+    phonearray=phonearray.slice(0,5);
+    timearray=timearray.slice(0,5);
+    //console.log(phonearray);
+    //console.log(timearray);
+}
+    else if(fulladdressC.length>0 && fulladdressC.length<5){
+      fulladdressC=fulladdressC.slice(0,fulladdressC.length);
+      phonearray=phonearray.slice(0,fulladdressC.length);
+      timearray=timearray.slice(0,fulladdressC.length);
+      //console.log(phonearray);
+      //console.log(timearray);
+
+  
+  }
+
+newline= fulladdressC.join("\n");
+///console.log(newline);
   
 let messageData = {
     "attachment": {
@@ -288,17 +302,21 @@ let messageData = {
       "payload": {
         "template_type": "generic",
         "elements": [{
-          "title": "Gotcha! You are looking for stores near" + " " + str,
-          "subtitle": "Come Visit Us! We'd be happy to assist!",
-          "image_url": "http://www.androidcentral.com/sites/androidcentral.com/files/styles/xlarge/public/article_images/2015/12/att-store-two-signs-hero.jpg?itok=dOdakNe0",
+          "title": "Come Visit Us! We'd be happy to help!",
+          "subtitle": "Store 1:" + fulladdress + "\n" + "Arcdistance:" + distance + " " + "miles",
+      "image_url": "http://www.androidcentral.com/sites/androidcentral.com/files/styles/xlarge/public/article_images/2015/12/att-store-two-signs-hero.jpg?itok=dOdakNe0",
           "buttons": [{
             "type": "web_url",
             "url": 'http://bing.com/maps/default.aspx?rtop=0~~&rtp=pos.' + originlat + '_' + originlong + '~pos.' + nearestlat + '_' + nearestlong + '&mode=',
-            "title": "Directions : Nearest Store",
+            "title": "Directions: Store 1",
           }, {
             "type": "postback",
             "title": "Other Stores",
-            "payload": "Here is a list of other stores nearby: \n" + fulladdressC,
+            "payload": "Here is a list of other stores nearby: \n" + newline,
+          },{
+            "type": "postback",
+            "title": "Re-Enter Zip",
+            "payload": "Please Enter Your ZipCode",
           }],
        }]
       }
@@ -320,14 +338,48 @@ let messageData = {
       console.log('Error: ', response.body.error)
     }
   })
-//}
-//}
-fulladdressC.length=0;
 
+fulladdressC.length=0;
+}
    });
   });
   req.end();
 
+}
+
+function QuickReply(sender) {
+
+  let messageData = {
+    "attachment":{
+      "type":"template",
+         "payload":{
+            "template_type":"button",
+            "text":"Need further assistance? Talk to a representative",
+            "buttons":[
+               {
+                  "type":"phone_number",
+                  "title":"Call Representative",
+                  "payload":"+18003310500"
+               }
+            ]
+         }
+    }
+  }
+  request({
+    url: 'https://graph.facebook.com/v2.6/me/messages',
+    qs: {access_token:token},
+    method: 'POST',
+    json: {
+      recipient: {id:sender},
+      message: messageData,
+    }
+  }, function(error, response, body) {
+    if (error) {
+      console.log('Error sending messages: ', error)
+    } else if (response.body.error) {
+      console.log('Error: ', response.body.error)
+    }
+  })
 }
 
 
@@ -431,11 +483,11 @@ function OptionButtonCard(sender) {
           "buttons": [{
             "type": "postback",
             "title": "Store Locations",
-            "payload": "Please enter your zipcode"
+            "payload": "Please Enter Your ZipCode"
           }, {
-            "type": "web_url",
+            "type": "postback",
             "title": "Other..",
-            "url": "https://www.att.com/",
+            "payload": "Further Assistance",
             
           }],
          }]
