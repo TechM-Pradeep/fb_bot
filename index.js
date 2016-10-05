@@ -45,6 +45,7 @@ var attachment;
     method: 'GET',
     headers: {'Accept': 'application/json'}
   };
+	
 
   var req1 = https.request(manufacturers, function(res1) {
     res1.setEncoding('utf-8');
@@ -92,7 +93,19 @@ var attachment;
 
 
   let messaging_events = req.body.entry[0].messaging
+  
+  //Connect to Api.ai
+  var access_token = 'bb07193d13224152bfe4b43ccd5f87b9'
+  var apiai = require('apiai')
+  var app = apiai(access_token)
+  var options = {
+    proxy: 'http://one.proxy.att.com:8080'
+}
+//va
+  
+  
   for (let i = 0; i < messaging_events.length; i++) {
+	  
     let event = req.body.entry[0].messaging[i]
     let sender = event.sender.id
     /*if (event.message && event.message.attachments && event.message.attachments.length > 0) {
@@ -108,8 +121,10 @@ var attachment;
                 }
             }*/
     if (event.message && event.message.text) {
+		
+		
       let text = event.message.text
-     
+   
       var regex = new RegExp(ampreplace + ".*", "gi");
       var regex1= new RegExp(ampplain + ".*", "gi");
      //console.log(regex);
@@ -119,7 +134,9 @@ var attachment;
       var match4=text.match(regex1);
       var zipmatch=text.match(zipcode);
       
-       if (text === 'ATT Services') {
+		  		 console.log("flag 1");
+
+		       if (text === 'ATT Services') {
         sendATTMessage(sender)
         continue
       }
@@ -132,8 +149,47 @@ var attachment;
         sendStoreLocator(sender , zip)
         continue
       }
-      sendTextMessage(sender, text.substring(0, 200))
+		
+				  		 console.log("flag 2");
+
+		
+		var search_text = text
+		var request = app.textRequest(search_text, options);
+		request.on('response', function(response) {		
+			var paramToPost= search_text;
+			var fulfillment = "I am sorry, we do not get your question in bot. For more questions, visit www.att.com."
+			if(response.result.fulfillment.speech){
+			var fulfillment = response.result.fulfillment.speech.toString();}
+		  		 console.log("api.ai return " + response.result.parameters);
+			if (response.result.parameters.globalSearch){
+  						console.log("global search console: " +response.result.parameters.globalSearch);
+						paramToPost = response.result.parameters.globalSearch;
+			}
+			
+		var callBackValue = postToGlobalSearch(paramToPost).then(function (response) {
+			var obj = JSON.parse(response.body);
+			if(parseInt(obj.response.numFound)>0){
+				sendGlobalSearchMessage(sender,response)
+			}else{
+				sendTextMessage(sender,fulfillment)
+			}
+    })
+    .catch(function (err) {
+				  		 console.log("api.ai return error " + err);
+    });
+			
+		});
+		request.on('error', function(error) {
+		console.log(error);
+	});
+
+		request.end();
+		
+		//Echo response
+     // sendTextMessage(sender, text.substring(0, 200))
     }
+		
+		
     if (event.postback) {
       let text = JSON.stringify(event.postback)
       var postback_payload = event.postback.payload;
@@ -168,7 +224,28 @@ var attachment;
 
 // recommended to inject access tokens as environmental variables, e.g.
 // const token = process.env.PAGE_ACCESS_TOKEN
-const token = "EAACmDQA9zBEBAHX5fUJZCqpAwxSbGziXqBcEjTFDm6EfrEYJXZCxiZBNzL5M252qIV0SWZAmNH7in53glS0wyaDyb6dAzs5daShHN2DrGrdFHSDd4VpD1kkDfIxSbOlKRyfwWsKZB2tBfhAU946N0oZBCIF6IZAcYjAl8gUqEtV9FvaF4SFkwRR"
+//const token = "EAACmDQA9zBEBAHX5fUJZCqpAwxSbGziXqBcEjTFDm6EfrEYJXZCxiZBNzL5M252qIV0SWZAmNH7in53glS0wyaDyb6dAzs5daShHN2DrGrdFHSDd4VpD1kkDfIxSbOlKRyfwWsKZB2tBfhAU946N0oZBCIF6IZAcYjAl8gUqEtV9FvaF4SFkwRR"
+const token = "EAADpf77PfK4BAHOHPUL3HU3MpM7BQz3OUBKODvd8LPC6EHyTHjfn7zDZAMRHv0SgiaHFwVjPg9LIADmRH45mM0ChZBp6omyekEUNWGxX9tqcaZCo4OFi3Ynyg4Jn6DWpnqwgewKMErimKnkqYYYoQHf77USyYFhot3ZCqNtM8D5pNJAvYzOf"
+
+function postToGlobalSearch(paramToPost){
+
+	var rp = require('request-promise');
+
+	
+	var urlToGet =  paramToPost.replace(' ', '+');
+	urlToGet = "https://www.att.com/global-search/gsLayer.jsp?core=GlobalSearch&handler=lucid&wt=json&hl=true&hl.useFastVectorHighlighter=true&hl.fragsize=300&fl=score,preferredService,toggleId,chargePeriod,ATTNextDefaultCommitmentTermPrice,ATTNextDefaultCommitmentTerm,docType,isNew,availability,webOnly,isTablet,has4g,has4glte,mediaId,serviceChain,mfg_,manufacturerModelNumber,color,color_base,url,data_source_name,url_learnMorePage_en,videoStartVars,url_configFile_en,url_thumbIcon_en,stockDescription,noOfCustomerReviews,avgCustomerRating,thumbImage,navigationTree,title,id,description,price,imageURL,largeImageURL,productURL,productUrl,skuId,productName,productType,lineOfBusinessType,paymentType,deviceType,displayName,nationwideMailInRebate,totalDueToday,mirUrl,lastUpdated,application,supportDeviceMake,basePrice,supportDeviceModel,make,model,makeDisplayName,modelDisplayName,lengthInSeconds,ATTNextCommitmentTerm-24-Price,taxoStyle,service,esupportMapping,refurbished,isIRUDiscountApplicable,isIRUExceptionApplicable,launchDate,expirationDate,useLaunchDate,useExpirationDate,ATTInstallmentTerm-20-Price,noCommitPrice,contractLength,simOnly,ATTNextCommitmentTerm-30-Price&fq=excludeInternalSearch%3Afalse&facet=false&&user=admin&role=DEFAULT&bq=(*%3A*%20-simOnly%3A%22Y%22)%5e2100&bq=(*%3A*%20-data_source_name%3A%22Device%20How%20To%20-%20StepByStep%22)%5e1000&bq=(*%3A*%20-data_source_name%3A%22Device%20How%20To%20-%20Interactive%22)%5e1000&bq=(*%3A*%20-data_source_name%3A%22GVP%20Video%20Feed%22)%5e2000&bq=(*%3A*%20-data_source_name%3A%5Cu201DDeveloper%5Cu201D)%5E20000&bq=(*%3A*%20-data_source_name%3A%22Developer%22)%5e21000&bq=(*%3A*%20-data_source_name%3A%22forums%22)%5e150000&bq=(*%3A*%20-data_source_name%3A%22Corporate%20Information%22)%5E10000&bq=(*%3A*%20-data_source_name%3A%22corp%22)%5E11000&bq=(*%3A*%20-id%3A*lifetips*)%5E10000&bq=(*%3A*%20-id%3A*relayservice*)%5E10000&start=0&rows=20&q=" + urlToGet + "&fq=zipCode:All+OR+zipCode:98012+OR+state:All+OR+state:%22WA%22&bq=(*%3A*%20-stockDescription%3AN)%5E10000&fq=navigationTree:%22~All~%22&&&fq=navigationTree:%22~All~%22&fq=iruIndicator%3AAll&fq=(region%3A%22all%22)%20OR%20region%3A%22WA%22&fq=(useLaunchDate:false)%20OR%20(launchDate:[*%20TO%202016-07-25T09:27:20.373Z])&fq=(useExpirationDate:false)%20OR%20(expirationDate:[2016-07-25T09:27:20.373Z%20TO%20*])";
+	
+	console.log("urlToGet " + urlToGet)
+
+
+var options = {
+    method: 'GET',
+    uri: urlToGet,
+    resolveWithFullResponse: true    //  <---  <---  <---  <---
+};
+return rp(options);
+
+}
 
 
 
@@ -419,7 +496,7 @@ function sendATTMessage(sender) {
         "elements": [{
           "title": "Welcome to the AT&T Support Messenger Bot.",
           "subtitle": "What can we help you with today?",
-          "image_url": "http://cdn.bgr.com/2015/12/att-logo-globe.png",
+          "image_url": "http://pro.boxoffice.com/wp-content/uploads/2016/07/ATT-Logo.png",
           "buttons": [{
             "type": "postback",
             "title": prod1,
@@ -436,7 +513,7 @@ function sendATTMessage(sender) {
         }, {
           "title": "Welcome to the AT&T Support Messenger Bot.",
           "subtitle": "What can we help you with today?",
-          "image_url": "http://cdn.bgr.com/2015/12/att-logo-globe.png",
+          "image_url": "http://pro.boxoffice.com/wp-content/uploads/2016/07/ATT-Logo.png",
           "buttons": [{
             "type": "web_url",
             "title": prod4,
@@ -550,6 +627,94 @@ function sendSecondCard(sender) {
             "type": "postback",
             "title": "I am looking for something else",
             "payload": "Ok.Take a look at other options below:",
+          }],
+        }]
+      }
+    }
+  }
+  request({
+    url: 'https://graph.facebook.com/v2.6/me/messages',
+    qs: {access_token:token},
+    method: 'POST',
+    json: {
+      recipient: {id:sender},
+      message: messageData,
+    }
+  }, function(error, response, body) {
+    if (error) {
+      console.log('Error sending messages: ', error)
+    } else if (response.body.error) {
+      console.log('Error: ', response.body.error)
+    }
+  })
+}
+
+function sendGlobalSearchMessage(sender, response) {
+			
+	var obj = JSON.parse(response.body);
+	  for(var i = 0; i < 3;i++){
+		  			  console.log("before change" + obj.response.docs[i].id);
+		  		  	console.log("before change" + obj.response.docs[i].title);
+		  		  	console.log("before change" + obj.response.docs[i].data_source_name);
+ }
+		
+	
+
+	  for(var i = 0; i < 3;i++){
+	  	  if (obj.response.docs[i].data_source_name === "Esupport Feed"){
+			  obj.response.docs[i].id = "http://www.att.com/esupport/article.html#!/wireless/" + obj.response.docs[i].id.toString();
+			  console.log("after change " + obj.response.docs[i].id);
+			  continue
+		  }
+		  if (obj.response.docs[i].data_source_name === "Device How To - StepByStep"){
+			  obj.response.docs[i].id = "https://www.att.com" + obj.response.docs[i].id.toString();
+			  console.log("after change " + obj.response.docs[i].id);
+			  continue
+		  }
+		  if (obj.response.docs[i].data_source_name === "Catalog Feed"){
+			  obj.response.docs[i].id = obj.response.docs[i].productURL.toString();
+			  console.log("after change " + obj.response.docs[i].id);
+			  continue
+		  }
+		  if (obj.response.docs[i].data_source_name === "Device How To - Interactive"){
+			  obj.response.docs[i].id = "https://www.att.com" + obj.response.docs[i].id.toString();
+			  console.log("after change" + obj.response.docs[i].id);
+			  continue
+
+		  }
+		  
+		 
+		  var validUrl = require('valid-url');
+		  if (validUrl.isUri(obj.response.docs[i].id)){
+			  console.log('Looks like an URL');
+		  } else {
+			  obj.response.docs[i].id = "http://www.att.com" 
+			}
+		  
+  }
+
+	
+  let messageData = {
+    "attachment": {
+      "type": "template",
+      "payload": {
+        "template_type": "generic",
+        "elements": [{
+          "title": "Welcome to the AT&T Support Messenger Bot.",
+          "subtitle": "Here are your search results",
+          "image_url": "http://pro.boxoffice.com/wp-content/uploads/2016/07/ATT-Logo.png",
+          "buttons": [{
+            "type": "web_url",
+            "url": obj.response.docs[0].id.toString(),
+            "title": obj.response.docs[0].title.toString(),
+          }, {
+            "type": "web_url",
+            "title": obj.response.docs[1].title.toString(),
+            "url": obj.response.docs[1].id.toString(),
+          }, {
+             "type": "web_url",
+            "title": obj.response.docs[2].title.toString(),
+            "url": obj.response.docs[2].id.toString(),
           }],
         }]
       }
