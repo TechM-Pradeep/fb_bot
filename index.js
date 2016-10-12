@@ -3,14 +3,16 @@
 const express = require('express')
 const bodyParser = require('body-parser')
 const request = require('request')
+var  fs = require('fs');
 var https = require('https');
+ var parser = require('./parser.js');
+ var clearRequire = require('clear-require');
 var zipcode=/(^\d{5}$)|(^\d{5}-\d{4}$)/g;
 var address, name , originlat , originlong, nearestlat, nearestlong, address1, address2, zip, fulladdress, distance, c, addressC, addressC2 , addressall, zipc, storeaddress, newline, phone,hours, phone1,hours1;
 var fulladdressC=[];
 var addressarray=[];
 var phonearray=[];
 var timearray=[];
-//global.navigator=window.navigator;
 const app = express()
 
 
@@ -37,17 +39,24 @@ app.get('/webhook/', function (req, res) {
 
 // to post data
 app.post('/webhook/', function (req, res) {
+
+  /*var ipAddress;
+  // The request may be forwarded from local web server.
+  var forwardedIpsStr = req.header('x-forwarded-for'); 
+  if (forwardedIpsStr) {
+    // 'x-forwarded-for' header may return multiple IP addresses in
+    // the format: "client IP, proxy 1 IP, proxy 2 IP" so take the
+    // the first one
+    var forwardedIps = forwardedIpsStr.split(',');
+    ipAddress = forwardedIps[0]; 
+  
+  console.log("THIS IS YOUR IP!!!!!!! :");
+  console.log(ipAddress); }*/
+  
 //Display results based on names of manufacturers
 var attachment;
-  var manufacturers = {
-    host: 'www.att.com',
-    path: '/global-search/gsLayer.jsp?core=GlobalSearch&handler=lucid&role=DEFAULT&q=*:*&facet=false&hl=false&fl=title,manufacturerEscaped&rows=100000&role=DEFAULT&fq=productType:Device&facet.limit=-1&hl=false',
-    method: 'GET',
-    headers: {'Accept': 'application/json'}
-  };
-  
-
-  var req1 = https.request(manufacturers, function(res1) {
+ 
+var req1 = https.request(parser.manufacturers, function(res1) {
     res1.setEncoding('utf-8');
 
     var responseString1 = '';
@@ -76,9 +85,7 @@ var attachment;
     return index == self.indexOf(elem);
 
 })
-      //var isWin = /^win/.test(process.platform=== 'win32');
-      //console.log("Checking Platform");
-      //console.log(isWin);
+      
       var stringify=JSON.stringify(unique);
       var brackets=stringify.split(/[\{\[]/).join('(').split(/[\}\]]/).join(')');
       var quotes=brackets.replace(/"/g, "");
@@ -145,14 +152,14 @@ var attachment;
         continue
       }
       if (text == zipmatch) {
-        var zip=text;
+        zip=text;
         sendStoreLocator(sender , zip)
         continue
       }
     
                console.log("flag 2");
 
-    
+   
     var search_text = text
     var request = app.textRequest(search_text, options);
     request.on('response', function(response) {   
@@ -202,6 +209,7 @@ var attachment;
           else if(postback_payload == 'Further Assistance'){
             QuickReply(sender);
           }
+          
     else{
             sendTextMessage(sender, event.postback.payload, token)
           }
@@ -216,6 +224,16 @@ var attachment;
 
 })
 
+     
+   
+
+     
+   
+     
+   
+
+     
+   
      
    
 
@@ -268,20 +286,19 @@ function sendTextMessage(sender, text) {
   })
 }
 
+
+
 function sendStoreLocator(sender ,zip) {
-  
-  var url1='/apis/maps/v2/locator/search/query.json?';
-  var url2='&max=150&poi_types=pos&radius=10';
-  
-   var store = {
 
-    host: 'www.att.com',
-     path: url1 + 'q=' + zip + url2 ,
-    method: 'GET',
-    headers: {'Accept': 'application/json'}
-  };
+  clearRequire('./getstorelocation.js');
 
-  var req = https.request(store, function(res) {
+module.exports.zip1=zip;
+    
+var getstorelocation = require('./getstorelocation.js');
+
+
+var req = https.request(getstorelocation.store1, function(res) {
+
     res.setEncoding('utf-8');
 
     var responseString = '';
@@ -293,6 +310,7 @@ function sendStoreLocator(sender ,zip) {
 
     res.on('end', function() {
       var responseObject = JSON.parse(responseString);
+      
     var str = JSON.stringify(responseObject.origin.city);
       console.log(str);
       var count= responseObject.count;
@@ -369,8 +387,9 @@ if(fulladdressC.length>=5){
   
   }
 
-newline= fulladdressC.join("\n");
-///console.log(newline);
+newline= fulladdressC.join("\n\n");
+
+
   
 let messageData = {
     "attachment": {
@@ -379,7 +398,7 @@ let messageData = {
         "template_type": "generic",
         "elements": [{
           "title": "Come Visit Us! We'd be happy to help!",
-          "subtitle": "Store 1:" + fulladdress + "\n" + "Arcdistance:" + distance + " " + "miles",
+          "subtitle": "Store 1:" + fulladdress + "\n" + "ArcDistance:" + distance + " " + "miles",
       "image_url": "http://www.androidcentral.com/sites/androidcentral.com/files/styles/xlarge/public/article_images/2015/12/att-store-two-signs-hero.jpg?itok=dOdakNe0",
           "buttons": [{
             "type": "web_url",
@@ -388,7 +407,8 @@ let messageData = {
           }, {
             "type": "postback",
             "title": "Other Stores",
-            "payload": "Here is a list of other stores nearby: \n" + newline,
+            "payload": "Stores Near " + " " + str + ": \n\n" + newline,
+            
           },{
             "type": "postback",
             "title": "Re-Enter Zip",
@@ -416,6 +436,7 @@ let messageData = {
   })
 
 fulladdressC.length=0;
+
 }
    });
   });
@@ -466,14 +487,9 @@ function QuickReply(sender) {
 
 
 function sendATTMessage(sender) {
-     var options = {
-    host: 'www.att.com',
-    path: '/global-search/gsLayer.jsp?q=*:*&core=GlobalSearch&handler=lucid&role=DEFAULT&start=0&rows=0&user=admin&indent=true&role=DEFAULT&facet=true&facet.field=navigationTree&facet.mincount=1&facet.limit=-1&wt=json',
-    method: 'GET',
-    headers: {'Accept': 'application/json'}
-  };
 
-  var req = https.request(options, function(res) {
+
+  var req = https.request(parser.options, function(res) {
     res.setEncoding('utf-8');
 
     var responseString = '';
@@ -490,6 +506,8 @@ function sendATTMessage(sender) {
       var prod2=str.match(/TV/g)[0];
       var prod3=str.match(/Digital Life/g)[0];
       var prod4=str.match(/Internet/g)[0];
+
+  
       
   let messageData = {
 
@@ -547,7 +565,8 @@ function sendATTMessage(sender) {
       console.log('Error: ', response.body.error)
     }
   })
-  });
+
+ });
   });
   req.end();
 }
