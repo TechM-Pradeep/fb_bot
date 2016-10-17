@@ -181,13 +181,18 @@ var req1 = https.request(parser.manufacturers, function(res1) {
   				console.log("global search console: " +response.result.parameters.globalSearch);
 				paramToPost = response.result.parameters.globalSearch;
 		}
+			
 		
 			var groupTitle="";
 			var groupUrl="";
 			var groupFulfillment="";
 			if(paramToPost == "group"){
 			 groupTitle = response.result.parameters.ATTgroup;
-			let groupTitleValue = groupTitle.replace(/\s+/g, '');
+
+			var groupTitleValue = groupTitle.replace(/\s+/g, '');
+		 groupTitleValue = groupTitleValue.replace(/[^\w\s]/gi, '')
+
+				console.log("APIkey" + groupTitleValue);
 			 groupUrl = response.result.parameters[groupTitleValue];
 			 groupFulfillment = response.result.fulfillment.speech;
 
@@ -692,38 +697,43 @@ function sendSecondCard(sender) {
 function sendGlobalSearchMessage(sender, response) {
 			
 	var obj = JSON.parse(response.body);
-	  for(var i = 0; i < 3;i++){
-		  			  console.log("before change" + obj.response.docs[i].id);
-		  		  	console.log("before change" + obj.response.docs[i].title);
-		  		  	console.log("before change" + obj.response.docs[i].data_source_name);
- }
-		
+	var resultNum = 3;
 	
-
-	  for(var i = 0; i < 3;i++){
+	if(Object.keys(obj.response.docs).length<3){
+		console.log("docs length" + Object.keys(obj.response.docs).length.toString())
+		resultNum = Object.keys(obj.response.docs).length;
+	}
+	
+	  for(var i = 0; i < resultNum;i++){
+		  			  console.log("before change " + obj.response.docs[i].id);
+		  		  	console.log("before change " + obj.response.docs[i].title);
+		  		  	console.log("before change " + obj.response.docs[i].data_source_name);
+	  }
+	
+	  for(var i = 0; i < resultNum;i++){
+  
 	  	  if (obj.response.docs[i].data_source_name === "Esupport Feed"){
 			  obj.response.docs[i].id = "http://www.att.com/esupport/article.html#!/wireless/" + obj.response.docs[i].id.toString();
-			  console.log("after change " + obj.response.docs[i].id);
+			  console.log("Esupport Feed after change " + obj.response.docs[i].id);
 			  continue
 		  }
 		  if (obj.response.docs[i].data_source_name === "Device How To - StepByStep"){
 			  obj.response.docs[i].id = "https://www.att.com" + obj.response.docs[i].id.toString();
-			  console.log("after change " + obj.response.docs[i].id);
+			  console.log("Device How To - StepByStep after change " + obj.response.docs[i].id);
 			  continue
 		  }
 		  if (obj.response.docs[i].data_source_name === "Catalog Feed"){
 			  obj.response.docs[i].id = obj.response.docs[i].productURL.toString();
-			  console.log("after change " + obj.response.docs[i].id);
+			  console.log("Catalog Feed after change " + obj.response.docs[i].id);
 			  continue
 		  }
 		  if (obj.response.docs[i].data_source_name === "Device How To - Interactive"){
 			  obj.response.docs[i].id = "https://www.att.com" + obj.response.docs[i].id.toString();
-			  console.log("after change" + obj.response.docs[i].id);
+			  console.log("Device How To - Interactive after change" + obj.response.docs[i].id);
 			  continue
 
 		  }
 		  
-		 
 		  var validUrl = require('valid-url');
 		  if (validUrl.isUri(obj.response.docs[i].id)){
 			  console.log('Looks like an URL');
@@ -732,6 +742,18 @@ function sendGlobalSearchMessage(sender, response) {
 			}
 		  
   }
+
+	
+	var jsonArr = [];
+
+for (var i = 0; i < resultNum; i++) {
+    jsonArr.push({
+            "type": "web_url",
+            "url": obj.response.docs[i].id.toString(),
+            "title": obj.response.docs[i].title.toString().replace(/&amp;/g, '&'),
+		
+    });
+}
 
 	
   let messageData = {
@@ -743,19 +765,7 @@ function sendGlobalSearchMessage(sender, response) {
           "title": "Here are your search results",
           "subtitle": "",
           "image_url": "http://pro.boxoffice.com/wp-content/uploads/2016/07/ATT-Logo.png",
-          "buttons": [{
-            "type": "web_url",
-            "url": obj.response.docs[0].id.toString(),
-            "title":  obj.response.docs[0].title.toString().replace(/&amp;/g, '&'),
-          }, {
-            "type": "web_url",
-            "title": obj.response.docs[1].title.toString(),
-            "url":  obj.response.docs[1].title.toString().replace(/&amp;/g, '&'),
-          }, {
-             "type": "web_url",
-            "title": obj.response.docs[2].title.toString(),
-            "url":  obj.response.docs[2].title.toString().replace(/&amp;/g, '&'),
-          }],
+          "buttons": jsonArr,
         }]
       }
     }
@@ -778,6 +788,10 @@ function sendGlobalSearchMessage(sender, response) {
 }
 
 function sendATTGroupMessage(sender, groupTitle, groupUrl, groupFulfillment) {
+	
+	console.log("sendGroupMessage");
+		console.log("sendGroupMessage" + groupTitle + groupUrl + groupFulfillment);
+
 	
 	let title = groupTitle.toString();
 	let URL = groupUrl.toString();
