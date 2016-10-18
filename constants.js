@@ -7,11 +7,14 @@
     module.exports.globalSearchAPIEnd=globalSearchAPIEnd_Constant;
 
 
-var FB_ACCESS_TOKEN_Constant = 'EAADpf77PfK4BAHOHPUL3HU3MpM7BQz3OUBKODvd8LPC6EHyTHjfn7zDZAMRHv0SgiaHFwVjPg9LIADmRH45mM0ChZBp6omyekEUNWGxX9tqcaZCo4OFi3Ynyg4Jn6DWpnqwgewKMErimKnkqYYYoQHf77USyYFhot3ZCqNtM8D5pNJAvYzOf';
+var FB_ACCESS_TOKEN_Constant = 'EAACmDQA9zBEBAJ0K5wPm0oX80qLdcMIioXEtbisZBhnLtgwppX409OKLK0HnYOtkCMh2f89quuJZCnTrZAZBdRhCsuqfzfnxgpgnvMdIXx2xBnmt4GcB0JgSevSQppUXmnhjIZAUm3CgHvIXqZCYFDyDB2m024ZAoX6od2dXXCQ99UHmd7CdLqG';
     module.exports.FB_ACCESS_TOKEN=FB_ACCESS_TOKEN_Constant;
 
 
 var APIAI_ACCESS_TOKEN_Constant = 'c7197e66391f494b992697d2a033eb77'; //AB's first agent b470be306e524f2084d133ef175acb3a'//'bb07193d13224152bfe4b43ccd5f87b9'
     module.exports.APIAI_ACCESS_TOKEN=APIAI_ACCESS_TOKEN_Constant;
+
+    var zipcity=/(^\d{5}$)|(^\d{5}-\d{4}$)/g;
+    module.exports.zipcity=zipcity;
 
  
