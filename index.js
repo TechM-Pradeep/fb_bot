@@ -112,15 +112,13 @@ function posttitle(ampval1,ampval2){
       var match4=text.match(regex1);
       var zipmatch=text.match(zipcode);
       
-           console.log("flag 1");
 
-           if (text === 'ATT Services') {
-       // sendATTMessage(sender)
-		        sendSecondCard(sender)
-
+       if (text === 'ATT Services') {
+        sendATTMessage(sender)
         continue
       }
       if (text == match3 || text == match4) {
+		sendSecondCard(sender)
         continue
       }
       if (text == zipmatch) {
@@ -129,7 +127,6 @@ function posttitle(ampval1,ampval2){
         continue
       }
     
-               console.log("flag 2");
 
    
     var search_text = text
@@ -141,7 +138,6 @@ function posttitle(ampval1,ampval2){
     var fulfillment = response.result.fulfillment.speech;}
       if(response.result.parameters.directFeed){
       var directFeed = response.result.parameters.directFeed;
-        console.log("directFeed2" + response.result.parameters.directFeed.toString())
       }
       
     console.log("api.ai return " + JSON.stringify(response));
@@ -161,7 +157,6 @@ function posttitle(ampval1,ampval2){
       var groupTitleValue = groupTitle.replace(/\s+/g, '');
      groupTitleValue = groupTitleValue.replace(/[^\w\s]/gi, '')
 
-        console.log("APIkey" + groupTitleValue);
        groupUrl = response.result.parameters[groupTitleValue];
        groupFulfillment = response.result.fulfillment.speech;
 
@@ -197,9 +192,7 @@ function posttitle(ampval1,ampval2){
     //Echo response    
      // sendTextMessage(sender, text.substring(0, 200))
     }
-    
-    
-    
+        
     if (event.postback) {
       let text = JSON.stringify(event.postback)
       var postback_payload = event.postback.payload;
