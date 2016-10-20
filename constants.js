@@ -7,14 +7,32 @@
     module.exports.globalSearchAPIEnd=globalSearchAPIEnd_Constant;
 
 
-var FB_ACCESS_TOKEN_Constant = 'EAACmDQA9zBEBAJ0K5wPm0oX80qLdcMIioXEtbisZBhnLtgwppX409OKLK0HnYOtkCMh2f89quuJZCnTrZAZBdRhCsuqfzfnxgpgnvMdIXx2xBnmt4GcB0JgSevSQppUXmnhjIZAUm3CgHvIXqZCYFDyDB2m024ZAoX6od2dXXCQ99UHmd7CdLqG';
+var FB_ACCESS_TOKEN_Constant ='EAACmDQA9zBEBAJ1mi6SuOPba9FW0uPZC9ZBBerkcIXPXz2Tl6pZAYXG6ZC4TJRB3vkZCQCZAZAaQEq9W28CGFKtl71fDNyylwVnKS6YunsnIZCyzexZBgpJ72r999s44pDil5uQusIvvrY8LBOGbZAtd0uU4ZBWPlmeKc3tVRQjL6nFSVHsVTn5OyiG' 
     module.exports.FB_ACCESS_TOKEN=FB_ACCESS_TOKEN_Constant;
 
 
 var APIAI_ACCESS_TOKEN_Constant = 'c7197e66391f494b992697d2a033eb77'; //AB's first agent b470be306e524f2084d133ef175acb3a'//'bb07193d13224152bfe4b43ccd5f87b9'
     module.exports.APIAI_ACCESS_TOKEN=APIAI_ACCESS_TOKEN_Constant;
 
-    var zipcity=/(^\d{5}$)|(^\d{5}-\d{4}$)/g;
+var webHook_Verify_Constant='my_voice_is_my_password_verify_me';
+    module.exports.webHook_Verify=webHook_Verify_Constant;
+
+var ATTLogo_Constant='http://pro.boxoffice.com/wp-content/uploads/2016/07/ATT-Logo.png';
+    module.exports.ATTLogo=ATTLogo_Constant;
+
+var FB_Message_Constant= 'https://graph.facebook.com/v2.6/me/messages';
+	 module.exports.FB_Message=FB_Message_Constant;
+
+
+var zipcity=/(^\d{5}$)|(^\d{5}-\d{4}$)/g;
     module.exports.zipcity=zipcity;
+
+
+
+var default_Fullfillment_Constant='I am sorry I don’t understand your questions. Please ask again or go to http://www.att.com to get your answers.';
+    module.exports.default_Fullfillment=default_Fullfillment_Constant;
+
+
+
 
  

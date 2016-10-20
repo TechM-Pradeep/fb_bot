@@ -7,6 +7,9 @@ var  fs = require('fs');
 var https = require('https');
 var constants = require('./constants.js');
 var clearRequire = require('clear-require');
+var secondCardMessage = require('./parser/secondCard.js');
+var globalSearchParser = require('./parser/globalSearchParser.js');
+
  
 var zipcode=constants.zipcity;
 var zip;
@@ -28,7 +31,7 @@ app.get('/', function (req, res) {
 
 // for facebook verification
 app.get('/webhook/', function (req, res) {
-  if (req.query['hub.verify_token'] === 'my_voice_is_my_password_verify_me') {
+  if (req.query['hub.verify_token'] === constants.webHook_Verify) {
     res.send(req.query['hub.challenge'])
   }
   res.send('Error, wrong token')
@@ -112,11 +115,12 @@ function posttitle(ampval1,ampval2){
            console.log("flag 1");
 
            if (text === 'ATT Services') {
-        sendATTMessage(sender)
+       // sendATTMessage(sender)
+		        sendSecondCard(sender)
+
         continue
       }
       if (text == match3 || text == match4) {
-        sendSecondCard(sender)
         continue
       }
       if (text == zipmatch) {
@@ -170,14 +174,13 @@ function posttitle(ampval1,ampval2){
       if(directFeed){
         sendTextMessage(sender,fulfillment)
       }else if(paramToPost == "group"){
-        
           console.log("FLAG before");
        sendATTGroupMessage(sender, groupTitle, groupUrl, groupFulfillment) 
        
       }else if((parseInt(obj.response.numFound)>0)&&(paramToPost!="group")){
         sendGlobalSearchMessage(sender,response)
       }else{
-        sendTextMessage(sender,"I am sorry I don’t understand your questions. Please ask again or go to http://www.att.com to get your answers.")
+        sendTextMessage(sender,constants.default_Fullfillment)
       }
     })
     .catch(function (err) {
@@ -191,7 +194,7 @@ function posttitle(ampval1,ampval2){
 
     request.end();
     
-    //Echo response
+    //Echo response    
      // sendTextMessage(sender, text.substring(0, 200))
     }
     
@@ -219,12 +222,7 @@ function posttitle(ampval1,ampval2){
    }
 
 })
-
-     
-
-
-     
-   
+  
 
 // recommended to inject access tokens as environmental variables, e.g.
 // const token = process.env.PAGE_ACCESS_TOKEN
@@ -254,7 +252,7 @@ function sendTextMessage(sender, text) {
   let messageData = { text:text }
   
   request({
-    url: 'https://graph.facebook.com/v2.6/me/messages',
+    url: constants.FB_Message,
     qs: {access_token:token},
     method: 'POST',
     json: {
@@ -314,7 +312,7 @@ rest_util.fetchResponse(urlData, networkListener);
 
 function postStore(sender, storevalue){
   request({
-    url: 'https://graph.facebook.com/v2.6/me/messages',
+    url: constants.FB_Message,
     qs: {access_token:token},
     method: 'POST',
     json: {
@@ -354,7 +352,7 @@ function QuickReply(sender) {
     }
   }
   request({
-    url: 'https://graph.facebook.com/v2.6/me/messages',
+    url: constants.FB_Message,
     qs: {access_token:token},
     method: 'POST',
     json: {
@@ -403,7 +401,7 @@ function postProduct(sender, products){
   
 
   request({
-    url: 'https://graph.facebook.com/v2.6/me/messages',
+    url: constants.FB_Message,
     qs: {access_token:token},
     method: 'POST',
     json: {
@@ -445,7 +443,7 @@ function OptionButtonCard(sender) {
     }
   }
   request({
-    url: 'https://graph.facebook.com/v2.6/me/messages',
+    url: constants.FB_Message,
     qs: {access_token:token},
     method: 'POST',
     json: {
@@ -461,145 +459,17 @@ function OptionButtonCard(sender) {
   })
 }
 
-function sendSecondCard(sender) {
- let messageData = {
-    "attachment": {
-      "type": "template",
-      "payload": {
-        "template_type": "generic",
-        "elements": [{
-          "title": "Thank You! Popular Solutions are:",
-          "subtitle": "",
-          //"image_url": "http://messengerdemo.parseapp.com/img/rift.png",
-          "buttons": [{
-            "type": "web_url",
-            "url": "https://www.att.com/esupport/article.html#!/wireless/KM1008625",
-            "title": "View your current bill online"
-          }, {
-            "type": "web_url",
-            "title": "Unlocking phone or tablet",
-            "url": "https://www.att.com/esupport/article.html#!/wireless/KM1008728",
-            }, {
-            "type": "web_url",
-            "title": "Managing mobile purchases and subscriptions",
-            "url": "https://www.att.com/esupport/article.html#!/wireless/KM1009396",
-          }],
-          }, {
-          "title": "Thank You! Popular solutions are:",
-          "subtitle": "",
-          //"image_url": "http://cdn.bgr.com/2015/12/att-logo-globe.png",
-          "buttons": [{
-            "type": "web_url",
-            "title": "Canceling wireless service or removing a line",
-            "url": "https://www.att.com/esupport/article.html#!/wireless/KM1008472",
-            }, {
-            "type": "web_url",
-            "title": "Refilling your GoPhone account balance",
-            "url": "https://www.att.com/esupport/article.html#!/wireless/KM1008656",
-            }, {
-            "type": "postback",
-            "title": "I am looking for something else",
-            "payload": "Ok.Take a look at other options below:",
-          }],
-        }]
-      }
-    }
-  }
-  request({
-    url: 'https://graph.facebook.com/v2.6/me/messages',
-    qs: {access_token:token},
-    method: 'POST',
-    json: {
-      recipient: {id:sender},
-      message: messageData,
-    }
-  }, function(error, response, body) {
-    if (error) {
-      console.log('Error sending messages: ', error)
-    } else if (response.body.error) {
-      console.log('Error: ', response.body.error)
-    }
-  })
-}
 
 function sendGlobalSearchMessage(sender, response) {
-      
-  var obj = JSON.parse(response.body);
-  var resultNum = 3;
-  
-  if(Object.keys(obj.response.docs).length<3){
-    console.log("docs length" + Object.keys(obj.response.docs).length.toString())
-    resultNum = Object.keys(obj.response.docs).length;
-  }
-  
-    for(var i = 0; i < resultNum;i++){
-              console.log("before change " + obj.response.docs[i].id);
-              console.log("before change " + obj.response.docs[i].title);
-              console.log("before change " + obj.response.docs[i].data_source_name);
-    }
-  
-    for(var i = 0; i < resultNum;i++){
-  
-        if (obj.response.docs[i].data_source_name === "Esupport Feed"){
-        obj.response.docs[i].id = "http://www.att.com/esupport/article.html#!/wireless/" + obj.response.docs[i].id.toString();
-        console.log("Esupport Feed after change " + obj.response.docs[i].id);
-        continue
-      }
-      if (obj.response.docs[i].data_source_name === "Device How To - StepByStep"){
-        obj.response.docs[i].id = "https://www.att.com" + obj.response.docs[i].id.toString();
-        console.log("Device How To - StepByStep after change " + obj.response.docs[i].id);
-        continue
-      }
-      if (obj.response.docs[i].data_source_name === "Catalog Feed"){
-        obj.response.docs[i].id = obj.response.docs[i].productURL.toString();
-        console.log("Catalog Feed after change " + obj.response.docs[i].id);
-        continue
-      }
-      if (obj.response.docs[i].data_source_name === "Device How To - Interactive"){
-        obj.response.docs[i].id = "https://www.att.com" + obj.response.docs[i].id.toString();
-        console.log("Device How To - Interactive after change" + obj.response.docs[i].id);
-        continue
+		console.log("0");
 
-      }
-      
-      var validUrl = require('valid-url');
-      if (validUrl.isUri(obj.response.docs[i].id)){
-        console.log('Looks like an URL');
-      } else {
-        obj.response.docs[i].id = "http://www.att.com" 
-      }
-      
-  }
+	var data = JSON.parse(response.body);
+	console.log("1");
+	var messageData = globalSearchParser.golbalSearchParse(data);
+	console.log("2");
 
-  
-  var jsonArr = [];
-
-for (var i = 0; i < resultNum; i++) {
-    jsonArr.push({
-            "type": "web_url",
-            "url": obj.response.docs[i].id.toString(),
-            "title": obj.response.docs[i].title.toString().replace(/&amp;/g, '&'),
-    
-    });
-}
-
-  
-  let messageData = {
-    "attachment": {
-      "type": "template",
-      "payload": {
-        "template_type": "generic",
-        "elements": [{
-          "title": "Here are your search results",
-          "subtitle": "",
-          "image_url": "http://pro.boxoffice.com/wp-content/uploads/2016/07/ATT-Logo.png",
-          "buttons": jsonArr,
-        }]
-      }
-    }
-  }
   request({
-    url: 'https://graph.facebook.com/v2.6/me/messages',
+    url: constants.FB_Message,
     qs: {access_token:token},
     method: 'POST',
     json: {
@@ -615,12 +485,10 @@ for (var i = 0; i < resultNum; i++) {
   })
 }
 
-function sendATTGroupMessage(sender, groupTitle, groupUrl, groupFulfillment) {
-  
-  console.log("sendGroupMessage");
-    console.log("sendGroupMessage" + groupTitle + groupUrl + groupFulfillment);
 
-  
+
+function sendATTGroupMessage(sender, groupTitle, groupUrl, groupFulfillment) {
+
   let title = groupTitle.toString();
   let URL = groupUrl.toString();
   let Fulfillment = groupFulfillment.toString();
@@ -633,7 +501,7 @@ function sendATTGroupMessage(sender, groupTitle, groupUrl, groupFulfillment) {
         "elements": [{
           "title": Fulfillment,
           "subtitle": "",
-          "image_url": "http://pro.boxoffice.com/wp-content/uploads/2016/07/ATT-Logo.png",
+          "image_url": constants.ATTLogo,
           "buttons": [{
             "type": "web_url",
             "url": URL,
@@ -644,7 +512,7 @@ function sendATTGroupMessage(sender, groupTitle, groupUrl, groupFulfillment) {
     }
   }
   request({
-    url: 'https://graph.facebook.com/v2.6/me/messages',
+    url: constants.FB_Message,
     qs: {access_token:token},
     method: 'POST',
     json: {
@@ -660,6 +528,26 @@ function sendATTGroupMessage(sender, groupTitle, groupUrl, groupFulfillment) {
   })
   
 }
+
+function sendSecondCard(sender) {
+ let messageData = secondCardMessage.secondCardData();
+  request({
+    url: constants.FB_Message,
+    qs: {access_token:token},
+    method: 'POST',
+    json: {
+      recipient: {id:sender},
+      message: messageData,
+    }
+  }, function(error, response, body) {
+    if (error) {
+      console.log('Error sending messages: ', error)
+    } else if (response.body.error) {
+      console.log('Error: ', response.body.error)
+    }
+  })
+}
+
 
 
 app.listen(app.get('port'), function() {
