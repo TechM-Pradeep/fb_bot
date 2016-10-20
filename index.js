@@ -206,7 +206,7 @@ function posttitle(ampval1,ampval2){
           if(postback_payload == 'ATT Services'){
             sendATTMessage(sender);
           }
- else if(postback_payload == 'Ok.Take a look at other options below:' ){
+ else if(postback_payload == 'Ok.Take a look at other options below:'){
               OptionButtonCard(sender);
           }
           else if(postback_payload == 'Further Assistance'){
@@ -291,12 +291,12 @@ networkListener.on(NETWORK_CONSTANT.ON_SUCCESS, function(response) {
 var data2=  storenames.parse1(response);
 
 if(!data2[0]>0){
-var place=data2[1];
-sendTextMessage(sender, "Sorry! I was not able to locate any store near " + place + "! Please check the zipcode you have entered or try a different zipcode!")
+
+sendTextMessage(sender, storenames.errorcode)
 }
 
 else{
-var struct= data2[2];
+var struct= data2[1];
 postStore(sender,struct); 
 }
 
@@ -328,51 +328,11 @@ function postStore(sender, storevalue){
   })
 }
 
-function QuickReply(sender) {
 
-  let messageData = {
-     "attachment":{
-      "type":"template",
-         "payload":{
-            "template_type":"button",
-            "text":"Need further assistance?",
-            "buttons":[
-            {
-                  "type":"web_url",
-                  "title":"Connect with us!",
-                  "url":"http://about.att.com/sites/social_media"
-               },
-               {
-                  "type":"phone_number",
-                  "title":"Call Representative",
-                  "payload":"+18003310500"
-               }
-            ]
-         }
-    }
-  }
-  request({
-    url: constants.FB_Message,
-    qs: {access_token:token},
-    method: 'POST',
-    json: {
-      recipient: {id:sender},
-      message: messageData,
-    }
-  }, function(error, response, body) {
-    if (error) {
-      console.log('Error sending messages: ', error)
-    } else if (response.body.error) {
-      console.log('Error: ', response.body.error)
-    }
-  })
-}
-
-
+var prodnames = require('./parser/dataparsing.js');
 
 function sendATTMessage(sender) {
 
-var prodnames = require('./parser/dataparsing.js');
 var urlGenerator = require('./url/url_generator.js');
 var rest_util = require('./network/rest_util.js');
 var NETWORK_CONSTANT = require('./network/network_constant.js');
@@ -419,29 +379,7 @@ function postProduct(sender, products){
 
 
 function OptionButtonCard(sender) {
- let messageData = {
-    "attachment": {
-      "type": "template",
-      "payload": {
-        "template_type": "generic",
-        "elements": [{
-          "title": "Ok. Let's take a look at the other options below:",
-          "subtitle": "",
-          //"image_url": "https://www.kirkwoodsweeper.com/media/wysiwyg/john_uploads/kirkwood%20store%20locations.jpg",
-          "buttons": [{
-            "type": "postback",
-            "title": "Store Locations",
-            "payload": "Please Enter Your ZipCode"
-          }, {
-            "type": "postback",
-            "title": "Other..",
-            "payload": "Further Assistance",
-            
-          }],
-         }]
-      }
-    }
-  }
+ let messageData = prodnames.optionButtonCarddata();
   request({
     url: constants.FB_Message,
     qs: {access_token:token},
@@ -548,7 +486,26 @@ function sendSecondCard(sender) {
   })
 }
 
+function QuickReply(sender) {
 
+  let messageData = prodnames.quickreplyCarddata();
+     
+  request({
+    url: constants.FB_Message,
+    qs: {access_token:token},
+    method: 'POST',
+    json: {
+      recipient: {id:sender},
+      message: messageData,
+    }
+  }, function(error, response, body) {
+    if (error) {
+      console.log('Error sending messages: ', error)
+    } else if (response.body.error) {
+      console.log('Error: ', response.body.error)
+    }
+  })
+}
 
 app.listen(app.get('port'), function() {
   console.log('running on port', app.get('port'))

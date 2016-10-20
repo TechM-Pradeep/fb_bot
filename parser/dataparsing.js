@@ -7,43 +7,18 @@ module.exports = {
 
     parsenew : function (data) {
       return parsetitle(data);
+    },
+    optionButtonCarddata : function () {
+        return optionButtonCard();
+    },
+
+    quickreplyCarddata : function () {
+        return quickreplycard();
     }
 
 }
 
-
-var parseResult = function (data){
-    if(data == undefined){
-    fs.readFile('./stub/search.json', 'utf8', function (err,data) {
-      if (err) {
-        return console.log(err);
-      }
-      console.log("FROM STUB!");
-      return getProducts(data);
-    });
-   }else{
-    
-      return getProducts(data);
-   }
-}
-
-var parsetitle = function (data){
-  if(data == undefined){
-    fs.readFile('./stub/search.json', 'utf8', function (err,data) {
-      if (err) {
-        return console.log(err);
-      }
-      console.log("FROM STUB!");
-      return gettitle(data);
-    });
-   }else{
-    
-      return gettitle(data);
-   }
-}
-
-
-function getProducts(data){
+var parseResult= function(data){
       var responseObject = JSON.parse(data);
       var str = JSON.stringify(responseObject.facet_counts.facet_fields.navigationTree);
       var prod1=str.match(/Wireless/g)[0];
@@ -101,7 +76,7 @@ function getProducts(data){
 
 }
 
-function gettitle(data){
+var parsetitle= function(data){
   var responseObject1 = JSON.parse(data);
   var str1 = JSON.stringify(responseObject1.response.docs);
       var mf=responseObject1.response.docs;
@@ -115,7 +90,7 @@ function gettitle(data){
 
       }
       
-//console.log(namearray);
+
       var unique = titlearray.filter(function(elem, index, self) {
     return index == self.indexOf(elem);
 
@@ -129,4 +104,57 @@ function gettitle(data){
       var ampplain=pipe.replace(/&amp;/g, "");
 console.log(ampplain);
       return [ampreplace,ampplain];
+}
+
+
+var optionButtonCard = function(){
+  var messageData = {
+    "attachment": {
+      "type": "template",
+      "payload": {
+        "template_type": "generic",
+        "elements": [{
+          "title": "Ok. Let's take a look at the other options below:",
+          "subtitle": "",
+          //"image_url": "https://www.kirkwoodsweeper.com/media/wysiwyg/john_uploads/kirkwood%20store%20locations.jpg",
+          "buttons": [{
+            "type": "postback",
+            "title": "Store Locations",
+            "payload": "Please Enter Your ZipCode"
+          }, {
+            "type": "postback",
+            "title": "Other..",
+            "payload": "Further Assistance",
+            
+          }],
+         }]
+      }
+    }
+  }
+  return messageData;
+}
+
+var quickreplycard = function(){
+  var messageData = {
+    "attachment":{
+      "type":"template",
+         "payload":{
+            "template_type":"button",
+            "text":"Need further assistance?",
+            "buttons":[
+            {
+                  "type":"web_url",
+                  "title":"Connect with us!",
+                  "url":"http://about.att.com/sites/social_media"
+               },
+               {
+                  "type":"phone_number",
+                  "title":"Call Representative",
+                  "payload":"+18003310500"
+               }
+            ]
+         }
+    }
+  }
+  return messageData;
 }

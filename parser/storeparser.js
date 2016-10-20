@@ -1,11 +1,11 @@
 var  fs = require('fs');
-//var index= require('./index.js');
 
 var address, name , originlat , originlong, nearestlat, nearestlong, address1, address2, zip, fulladdress, distance, c, addressC, addressC2 , addressall, zipc, storeaddress, newline, phone,hours, phone1,hours1;
 var fulladdressC=[];
 var addressarray=[];
 var phonearray=[];
 var timearray=[];
+
 module.exports = {
     parse1 : function (data) {
         return parsetitle(data);
@@ -14,25 +14,7 @@ module.exports = {
 }
 
 
-var parsetitle = function (data){
-  if(data == undefined){
-    fs.readFile('./stub/search.json', 'utf8', function (err,data) {
-      if (err) {
-        return console.log(err);
-      }
-      console.log("FROM STUB!");
-      return gettitle(data);
-    });
-   }else{
-    
-      return gettitle(data);
-   }
-}
-
-
-
-
-function gettitle(data){
+var parsetitle = function(data){
   var responseObject = JSON.parse(data);
       
     var str = JSON.stringify(responseObject.origin.city);
@@ -144,5 +126,9 @@ var messageData = {
   
 
 }
-return [count,str,messageData];
+
+var errortext = "Sorry! I was not able to locate any store near " + str + "! Please check the zipcode you have entered or try a different zipcode!";
+module.exports.errorcode=errortext;
+return [count,messageData];
+
 }
