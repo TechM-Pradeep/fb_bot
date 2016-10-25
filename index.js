@@ -506,7 +506,7 @@ function showMoreStores(sender, payload, token){
 "attachment":{
 "type":"template",
         "payload":{
-        "template_type":"button",
+        "template_type":"generic",
                 "text":"What do you want to do next?",
                 "buttons":[
                 {
