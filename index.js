@@ -558,11 +558,6 @@ function showMoreStores(sender, payload, token){
                 "type":"postback",
                 "title":"Start Chatting",
                 "payload":"DEVELOPER_DEFINED_PAYLOAD"
-              } ,
-              {
-                "type":"postback",
-                "title":"Start Chatting",
-                "payload":"DEVELOPER_DEFINED_PAYLOAD"
               }            
             ]
           }
