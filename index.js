@@ -515,6 +515,38 @@ function showMoreStores(sender, payload, token){
           {
             "title":"Welcome to Peter\'s Hats",
             "subtitle":"pradeep"
+          },
+          {
+            "title":"Welcome to Peter\'s Hats",
+            "subtitle":"pradeep"
+          },
+          {
+            "title":"Welcome to Peter\'s Hats",
+            "subtitle":"pradeep"
+          },
+          {
+            "title":"Welcome to Peter\'s Hats",
+            "subtitle":"pradeep"
+          },
+          {
+            "title":"Welcome to Peter\'s Hats",
+            "subtitle":"pradeep"
+          },
+          {
+            "title":"Welcome to Peter\'s Hats",
+            "subtitle":"pradeep"
+          },
+          {
+            "title":"Welcome to Peter\'s Hats",
+            "subtitle":"pradeep"
+          },
+          {
+            "title":"Welcome to Peter\'s Hats",
+            "subtitle":"pradeep"
+          },
+          {
+            "title":"Welcome to Peter\'s Hats",
+            "subtitle":"pradeep"
           }
         ]
       }
