@@ -500,7 +500,7 @@ function QuickReply(sender) {
   })
 }
 
-function showMoreStores(sender, event.postback.payload, token){
+/*function showMoreStores(sender, event.postback.payload, token){
         var messageData = {
 "attachment":{
 "type":"template",
@@ -538,7 +538,7 @@ console.log('Error sending messages: ', error)
 console.log('Error: ', response.body.error)
         }
 })
-}
+}*/
 
 app.listen(app.get('port'), function() {
   console.log('running on port', app.get('port'))
