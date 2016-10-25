@@ -359,7 +359,7 @@ function postProduct(sender, products){
     method: 'POST',
     json: {
       recipient: {id:sender},
-      message: products,
+      message: "products",
     } 
 }, function(error, response, body) {
     if (error) {
