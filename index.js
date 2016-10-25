@@ -87,7 +87,6 @@ function posttitle(ampval1,ampval2){
     
     let event = req.body.entry[0].messaging[i]
     let sender = event.sender.id
-    sendTextMessage(sender, "pradeep pankaj test");
     /*if (event.message && event.message.attachments && event.message.attachments.length > 0) {
                 attachment = event.message.attachments[0];
                 //console.log(attachment.payload.coordinates.lat);
