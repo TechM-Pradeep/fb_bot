@@ -509,10 +509,10 @@ function showMoreStores(sender, payload, token){
         "template_type":"generic",
         "elements":[
           {
-            "title":"Welcome to Peter\'s Hats",
-            "item_url":"",
-            "image_url":"",
-            "subtitle":"",
+            "title":"Welcome to Peter\'s Hats"
+          },
+          {
+            "title":"Welcome to Peter\'s Hats"
           }
         ]
       }
