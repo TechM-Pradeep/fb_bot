@@ -507,120 +507,27 @@ function showMoreStores(sender, payload, token){
 "type":"template",
         "payload":{
         "template_type":"generic",
-                "text":"What do you want to do next?",
-                "buttons":[
-                {
+        "elements":[
+          {
+            "title":"Welcome to Peter\'s Hats",
+            "item_url":"https://petersfancybrownhats.com",
+            "image_url":"https://petersfancybrownhats.com/company_image.png",
+            "subtitle":"We\'ve got the right hat for everyone.",
+            "buttons":[
+              {
                 "type":"web_url",
-                        "url":"https://petersapparel.parseapp.com",
-                        "title":"Show Website"
-                },
-                {
+                "url":"https://petersfancybrownhats.com",
+                "title":"View Website"
+              },
+              {
                 "type":"postback",
-                        "title":"Start Chatting",
-                        "payload":"USER_DEFINED_PAYLOAD"
-                },
-                {
-                "type":"postback",
-                        "title":"Start Chatting",
-                        "payload":"USER_DEFINED_PAYLOAD"
-                },
-                {
-                "type":"postback",
-                        "title":"Start Chatting",
-                        "payload":"USER_DEFINED_PAYLOAD"
-                },
-                {
-                "type":"postback",
-                        "title":"Start Chatting",
-                        "payload":"USER_DEFINED_PAYLOAD"
-                },
-                {
-                "type":"postback",
-                        "title":"Start Chatting",
-                        "payload":"USER_DEFINED_PAYLOAD"
-                },
-                {
-                "type":"postback",
-                        "title":"Start Chatting",
-                        "payload":"USER_DEFINED_PAYLOAD"
-                },
-                {
-                "type":"postback",
-                        "title":"Start Chatting",
-                        "payload":"USER_DEFINED_PAYLOAD"
-                },
-                {
-                "type":"postback",
-                        "title":"Start Chatting",
-                        "payload":"USER_DEFINED_PAYLOAD"
-                },
-                {
-                "type":"postback",
-                        "title":"Start Chatting",
-                        "payload":"USER_DEFINED_PAYLOAD"
-                },
-                {
-                "type":"postback",
-                        "title":"Start Chatting",
-                        "payload":"USER_DEFINED_PAYLOAD"
-                },
-                {
-                "type":"postback",
-                        "title":"Start Chatting",
-                        "payload":"USER_DEFINED_PAYLOAD"
-                },
-                {
-                "type":"postback",
-                        "title":"Start Chatting",
-                        "payload":"USER_DEFINED_PAYLOAD"
-                },
-                {
-                "type":"postback",
-                        "title":"Start Chatting",
-                        "payload":"USER_DEFINED_PAYLOAD"
-                },
-                {
-                "type":"postback",
-                        "title":"Start Chatting",
-                        "payload":"USER_DEFINED_PAYLOAD"
-                },
-                {
-                "type":"postback",
-                        "title":"Start Chatting",
-                        "payload":"USER_DEFINED_PAYLOAD"
-                },
-                {
-                "type":"postback",
-                        "title":"Start Chatting",
-                        "payload":"USER_DEFINED_PAYLOAD"
-                },
-                {
-                "type":"postback",
-                        "title":"Start Chatting",
-                        "payload":"USER_DEFINED_PAYLOAD"
-                },
-                {
-                "type":"postback",
-                        "title":"Start Chatting",
-                        "payload":"USER_DEFINED_PAYLOAD"
-                },
-                {
-                "type":"postback",
-                        "title":"Start Chatting",
-                        "payload":"USER_DEFINED_PAYLOAD"
-                },
-                {
-                "type":"postback",
-                        "title":"Start Chatting",
-                        "payload":"USER_DEFINED_PAYLOAD"
-                },
-                {
-                "type":"postback",
-                        "title":"Start Chatting",
-                        "payload":"USER_DEFINED_PAYLOAD"
-                }
-                ]
-        }
+                "title":"Start Chatting",
+                "payload":"DEVELOPER_DEFINED_PAYLOAD"
+              }              
+            ]
+          }
+        ]
+      }
 }
 }
 
