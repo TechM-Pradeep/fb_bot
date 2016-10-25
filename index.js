@@ -510,6 +510,9 @@ function showMoreStores(sender, payload, token){
         "elements":[
           {
             "title":"Welcome to Peter\'s Hats",
+            "item_url":"https://petersfancybrownhats.com",
+            "image_url":"https://petersfancybrownhats.com/company_image.png",
+            "subtitle":"We\'ve got the right hat for everyone.",
             "buttons":[
               {
                 "type":"web_url",
