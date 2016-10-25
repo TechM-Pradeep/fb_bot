@@ -504,3 +504,42 @@ app.listen(app.get('port'), function() {
   console.log('running on port', app.get('port'))
 })
 
+function showMoreStores(sender, event.postback.payload, token){
+        var messageData = {
+        "attachment":{
+        "type":"template",
+                "payload":{
+                "template_type":"button",
+                        "text":"What do you want to do next?",
+                        "buttons":[
+                        {
+                        "type":"web_url",
+                                "url":"https://petersapparel.parseapp.com",
+                                "title":"Show Website"
+                        },
+                        {
+                        "type":"postback",
+                                "title":"Start Chatting",
+                                "payload":"USER_DEFINED_PAYLOAD"
+                        }
+                        ]
+                }
+        }
+        }
+        
+        request({
+    url: constants.FB_Message,
+    qs: {access_token:token},
+    method: 'POST',
+    json: {
+      recipient: {id:sender},
+      message: messageData,
+    }
+  }, function(error, response, body) {
+    if (error) {
+      console.log('Error sending messages: ', error)
+    } else if (response.body.error) {
+      console.log('Error: ', response.body.error)
+    }
+  })
+}
