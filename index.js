@@ -546,7 +546,14 @@ function showMoreStores(sender, payload, token){
           },
           {
             "title":"Welcome to Peter\'s Hats",
-            "subtitle":"pradeep"
+            "subtitle":"pradeep",
+            "buttons":[
+              {
+                "type":"web_url",
+                "url":"https://petersfancybrownhats.com",
+                "title":"load more"
+              },
+            ]
           }
         ]
       }
