@@ -206,8 +206,8 @@ function posttitle(ampval1,ampval2){
             QuickReply(sender);
           }
     else{
-            //sendTextMessage(sender, event.postback.payload, token)//pp993j
-            showMoreStores(sender, event.postback.payload, token)
+            sendTextMessage(sender, event.postback.payload, token)//pp993j
+            //showMoreStores(sender, event.postback.payload, token)
           }
           continue
         }
