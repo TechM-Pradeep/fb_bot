@@ -284,7 +284,7 @@ const networkListener = new NetworkEventListener();
 networkListener.on(NETWORK_CONSTANT.ON_SUCCESS, function(response) {
 var template = test.getStoresTemplate(response);
 console.log("temp: "+JSON.stringify(template));
-//sendTextMessage(sender, storenames.errorcode);*/
+postStore(sender, template);
 var data2=  storenames.parse1(response);
 console.log("data2: "+JSON.stringify(data2));
 if(!data2[0]>0){
