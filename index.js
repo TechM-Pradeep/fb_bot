@@ -208,7 +208,7 @@ function posttitle(ampval1,ampval2){
     else{   
             var payload = decodeURI(event.postback.payload);
             console.log("@@@ "+payload);
-            var postback_type = event.postback.payload.type;
+            var postback_type = payload.type;
             if(postback_type != undefined && postback_type == "OTHER_STORES"){
                 showMoreStores(sender, event.postback.payload, token);
             }else{
