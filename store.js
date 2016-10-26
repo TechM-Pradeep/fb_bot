@@ -12,21 +12,21 @@ module.exports = {
     getStoresTemplate : function (data) {
         return getStoresTemplate(data);
     },
-    getOtherStoreTemplate : function (data) {
-        return getOtherStoreTemplate(data, payload);
+    getOtherStores : function (data) {
+        return getOtherStores(data, payload);
     }
 
 }
 
-data();
+//data();
 function data(){
     fs.readFile('./stores.json', 'utf8', function (err,data) {
       if (err) {
         return console.log(err);
       }
       var payload = getStoresTemplate(data);
-      var payload1 = {"type":"OTHER_STORES","index":30,"zipcode":"75080"}
-      getOtherStoreTemplate(data,payload1);
+      var payload1 = {"type":"OTHER_STORES","index":0,"zipcode":"75080"}
+      getOtherStores(data,payload1);
       //console.log(JSON.stringify(payload));
     });
     
@@ -146,7 +146,7 @@ function getPayloadStore(index, zipcode){
     return payload;
 }
 
-function getOtherStoreTemplate(data, payload){
+function getOtherStores(data, payload){
     var storesData = getStores(data);
     if (storesData.status == "STORE_FOUND") {
         var stores = storesData.data.stores;
@@ -165,9 +165,68 @@ function getOtherStoreTemplate(data, payload){
             
             console.log("storesInRange "+storesInRange.length);
             console.log("nextindex "+nextIndex);
-            //console.log("@@@ "+JSON.stringify(stores));
+            var otherStoresTemplate = getOtherStoresTemplate(storesInRange, payload,storesData);
+            console.log("@@@ "+JSON.stringify(otherStoresTemplate));
+            
+            return otherStoresTemplate;
+            
         }
     }else if (storesData.status == "NO_STORE_FOUND") {
         return storesData.data;
     }
+}
+
+function getOtherStoresTemplate(storesInRange, load,stores) {
+    /*var messageData = {
+     "attachment":{
+     "type":"template",
+     "payload":{
+     "template_type":"generic",
+     "elements":[
+     {
+     "title":"Welcome to Peter\'s Hats",
+     "subtitle":"pradeep"
+     }
+     {
+     "title":"Welcome to Peter\'s Hats",
+     "subtitle":"pradeep",
+     "buttons":[
+     {
+     "type":"web_url",
+     "url":"https://petersfancybrownhats.com",
+     "title":"load more"
+     },
+     ]
+     }
+     ]
+     }
+     }
+     }*/
+
+    var elements = [];
+    for (var i in storesInRange) {
+       var store = storesInRange[i];
+       
+       var buttonObject1 = {};
+       var map_url = "http://maps.google.com/?saddr="+stores.data.current_geolocation+"&daddr="+store.geolocaton;
+        buttonObject1.type = "web_url";
+        buttonObject1.url = map_url;
+        buttonObject1.title = "Directions";
+        
+        var buttons = [];
+        buttons.push(buttonObject1);
+        
+        var element = {};
+        element.title = store.name;
+        element.subtitle = store.address;
+        element.buttons = buttons;
+        
+        elements.push(element);
+    }
+    
+    var payload = {"template_type":"generic","elements":elements};
+    var attachment = {"type":"template","payload":payload};
+    var template = {"attachment":attachment};
+    
+    return template;
 }

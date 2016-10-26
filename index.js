@@ -210,7 +210,6 @@ function posttitle(ampval1,ampval2){
             console.log("@@@ "+payload);
             var postback_type = payload.type;
             if(postback_type != undefined && postback_type == "OTHER_STORES"){
-                showMoreStores(sender, event.postback.payload, token);
                 sendStoreLocator(sender,payload.zipcode,payload)
             }else{
                 sendTextMessage(sender, event.postback.payload, token);
@@ -296,6 +295,8 @@ networkListener.on(NETWORK_CONSTANT.ON_SUCCESS, function(response) {
                 postStore(sender, template);
         }else{
             console.log("@@@ pradeep");
+            var template = store.getOtherStores(response,otherStorePayload);
+            showMoreStores(sender, template, token);
         }
 /*var data2=  storenames.parse1(response);
 console.log("data2: "+JSON.stringify(data2));
@@ -581,7 +582,7 @@ url: constants.FB_Message,
         method: 'POST',
         json: {
         recipient: {id:sender},
-                message: messageData,
+                message: payload,
         }
 }, function(error, response, body) {
 if (error) {
