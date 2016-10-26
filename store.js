@@ -12,7 +12,7 @@ module.exports = {
     getStoresTemplate : function (data) {
         return getStoresTemplate(data);
     },
-    getOtherStores : function (data) {
+    getOtherStores : function (data, payload) {
         return getOtherStores(data, payload);
     }
 
