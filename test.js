@@ -45,7 +45,8 @@ function getStoresTemplate(data) {
         buttonObject1.title = "Directions";
         
         var otherStorePayLoad = getPayloadStore(stores.data.stores);
-        console.log("@@@ "+JSON.stringify(otherStorePayLoad));
+        otherStorePayLoad = encodeURI(JSON.stringify(otherStorePayLoad));
+        console.log("@@@ "+otherStorePayLoad);
         var buttonObject2 = {};
         buttonObject2.type = "postback";
         buttonObject2.title = "Other Stores";
