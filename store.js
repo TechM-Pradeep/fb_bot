@@ -193,6 +193,7 @@ function getOtherStoresTemplate(storesInRange, load,stores) {
             var buttonObject2 = {};
             buttonObject2.type = "postback";
             buttonObject2.title = "Load more";
+            load = encodeURI(JSON.stringify(load));
             buttonObject2.payload = load;
             buttons.push(buttonObject2);
         }
