@@ -206,6 +206,7 @@ function posttitle(ampval1,ampval2){
             QuickReply(sender);
           }
     else{   
+            console.log("@@@ "+event.postback.payload);
             var postback_type = event.postback.payload.type;
             if(postback_type != undefined && postback_type == "OTHER_STORES"){
                 showMoreStores(sender, event.postback.payload, token);
@@ -277,7 +278,7 @@ module.exports.zip1=zip;
 var storenames = require('./parser/storeparser.js');
 var urlGenerator = require('./url/url_gen.js');
 var rest_util = require('./network/rest_util.js');
-var test = require('./test.js');
+var store = require('./store.js');
 var NETWORK_CONSTANT = require('./network/network_constant.js');
 const EventEmitter = require('events');
 var urlData = urlGenerator.getlocation();
@@ -287,7 +288,7 @@ class NetworkEventListener extends EventEmitter {}
 const networkListener = new NetworkEventListener();
 networkListener.on(NETWORK_CONSTANT.ON_SUCCESS, function(response) {
 //console.log("response: "+JSON.stringify(response));
-var template = test.getStoresTemplate(response);
+var template = store.getStoresTemplate(response);
 //console.log("temp: "+JSON.stringify(template));
 postStore(sender, template);
 /*var data2=  storenames.parse1(response);

@@ -15,7 +15,7 @@ module.exports = {
 
 }
 
-//data();
+data();
 function data(){
     fs.readFile('./stores.json', 'utf8', function (err,data) {
       if (err) {
@@ -44,9 +44,10 @@ function getStoresTemplate(data) {
         buttonObject1.url = map_url;
         buttonObject1.title = "Directions";
         
-        var otherStorePayLoad = getPayloadStore(0);
+        var otherStorePayLoad = getPayloadStore(0,stores.data.origin_postal);
+       console.log("@@@ "+JSON.stringify(otherStorePayLoad));
         otherStorePayLoad = encodeURI(JSON.stringify(otherStorePayLoad));
-        console.log("@@@ "+otherStorePayLoad.length);
+       
         var buttonObject2 = {};
         buttonObject2.type = "postback";
         buttonObject2.title = "Other Stores";
@@ -107,7 +108,7 @@ function getStores(data) {
                 payload.page = 10;
                 payload.total_length = stores.length;
                 payload.current_geolocation = data.origin.lat+","+data.origin.lon;
-
+                payload.origin_postal = data.origin.postal;
                 var msg = {};
                 msg.status = "STORE_FOUND";
                 msg.data = payload;
@@ -130,10 +131,11 @@ function getNoStoreMessage(city){
     return msg;
 }
 
-function getPayloadStore(index){
+function getPayloadStore(index, zipcode){
     var payload = {};
     payload.type = "OTHER_STORES";
     payload.data = index;
+    payload.zipcode = zipcode;
     
     return payload;
 }
