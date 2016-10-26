@@ -15,7 +15,7 @@ module.exports = {
 
 }
 
-data();
+//data();
 function data(){
     fs.readFile('./stores.json', 'utf8', function (err,data) {
       if (err) {
@@ -44,7 +44,7 @@ function getStoresTemplate(data) {
         buttonObject1.url = map_url;
         buttonObject1.title = "Directions";
         
-        var otherStorePayLoad = getPayloadStore(stores.data.stores);
+        var otherStorePayLoad = getPayloadStore(0);
         otherStorePayLoad = encodeURI(JSON.stringify(otherStorePayLoad));
         console.log("@@@ "+otherStorePayLoad.length);
         var buttonObject2 = {};
@@ -130,11 +130,11 @@ function getNoStoreMessage(city){
     return msg;
 }
 
-function getPayloadStore(stores){
+function getPayloadStore(index){
     var payload = {};
     payload.type = "OTHER_STORES";
     stores.splice(0,1);
-    payload.data = stores;
+    payload.data = index;
     
     return payload;
 }
