@@ -166,7 +166,6 @@ function getOtherStores(data, payload){
             console.log("storesInRange "+storesInRange.length);
             console.log("nextindex "+nextIndex);
             var otherStoresTemplate = getOtherStoresTemplate(storesInRange, payload,storesData);
-            console.log("@@@ "+JSON.stringify(otherStoresTemplate));
             
             return otherStoresTemplate;
             

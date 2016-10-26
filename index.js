@@ -296,7 +296,8 @@ networkListener.on(NETWORK_CONSTANT.ON_SUCCESS, function(response) {
         }else{
             console.log("@@@ pradeep");
             var template = store.getOtherStores(response,otherStorePayload);
-            showMoreStores(sender, template, token);
+            console.log("@@@ "+JSON.stringify(template));
+            //showMoreStores(sender, template, token);
         }
 /*var data2=  storenames.parse1(response);
 console.log("data2: "+JSON.stringify(data2));
