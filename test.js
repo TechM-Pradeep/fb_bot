@@ -22,7 +22,7 @@ function data(){
         return console.log(err);
       }
       var payload = getStoresTemplate(data);
-      console.log(JSON.stringify(payload));
+      //console.log(JSON.stringify(payload));
     });
     
 }
@@ -44,10 +44,12 @@ function getStoresTemplate(data) {
         buttonObject1.url = map_url;
         buttonObject1.title = "Directions";
         
+        var otherStorePayLoad = getPayloadStore(stores.data.stores);
+        console.log("@@@ "+JSON.stringify(otherStorePayLoad));
         var buttonObject2 = {};
         buttonObject2.type = "postback";
         buttonObject2.title = "Other Stores";
-        buttonObject2.payload = "Please Enter Your ZipCode";
+        buttonObject2.payload = otherStorePayLoad;
         
         var buttonObject3 = {};
         buttonObject3.type = "postback";
@@ -127,29 +129,11 @@ function getNoStoreMessage(city){
     return msg;
 }
 
-function getStoresMessage(){
-   /* var messageData = {
-"attachment":{
-"type":"template",
-        "payload":{
-        "template_type":"generic",
-        "elements":[
-          {
-            "title":"Welcome to Peter\'s Hats",
-            "subtitle":"pradeep"
-          },
-          {
-            "title":"Welcome to Peter\'s Hats",
-            "subtitle":"pradeep",
-            "buttons":[
-              {
-                "type":"web_url",
-                "url":"https://petersfancybrownhats.com",
-                "title":"load more"
-              },
-            ]
-          }
-        ]
-     */
+function getPayloadStore(stores){
+    var payload = {};
+    payload.type = "OTHER_STORES";
+    stores.splice(0,1);
+    payload.data = stores;
     
+    return payload;
 }

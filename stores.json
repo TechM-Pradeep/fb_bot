@@ -1,4 +1,56 @@
 {
+  "copyright": "©2014 AT&T Intellectual Property. All rights reserved. AT&T, the AT&T logo and all other AT&T marks contained herein are trademarks of AT&T Intellectual Property and/or AT&T affiliated companies.",
+  "termsurl": "http://www.att.com/gen/general?pid=11561",
+  "logourl": "http://www.att.com/Common/indc/images/logo.gif",
+  "lang": "en",
+  "status": 200,
+  "resp_code": 0,
+  "deprecation_date": "",
+  "endoflife_date": "",
+  "query": {
+    "poi_types": [
+      "pos"
+    ],
+    "max": [
+      "150"
+    ],
+    "q": [
+      "75080"
+    ],
+    "radius": [
+      "10"
+    ]
+  },
+  "errors": null,
+  "count": 34,
+  "allcount": 34,
+  "origin": {
+    "city": "Richardson",
+    "county": "Dallas Co.",
+    "region": "TX",
+    "postal": "75080",
+    "country": "United States",
+    "lat": "32.974335",
+    "lon": "-96.74184",
+    "confidence": "High",
+    "matchCode": "Good"
+  },
+  "viewport": {
+    "sw": {
+      "lat": 32.8343,
+      "lon": -96.89833
+    },
+    "ne": {
+      "lat": 33.1086,
+      "lon": -96.571365
+    }
+  },
+  "moddt": {
+    "wifi": "2016-10-21T07:18:26+0000",
+    "ship": "2016-10-19T07:32:39+0000",
+    "country": "2016-10-19T07:32:39+0000",
+    "pos": "2016-10-24T20:35:36+0000"
+  },
   "results": [
     {
       "id": "12251",

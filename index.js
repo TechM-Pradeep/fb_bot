@@ -205,9 +205,13 @@ function posttitle(ampval1,ampval2){
           else if(postback_payload == 'Further Assistance'){
             QuickReply(sender);
           }
-    else{
-            //sendTextMessage(sender, event.postback.payload, token)
-            showMoreStores(sender, event.postback.payload, token);
+    else{   
+            var postback_type = event.postback.payload.type;
+            if(postback_type != undefined && postback_type == "OTHER_STORES"){
+                showMoreStores(sender, event.postback.payload, token);
+            }else{
+                sendTextMessage(sender, event.postback.payload, token);
+            }
           }
           continue
         }
