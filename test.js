@@ -133,7 +133,6 @@ function getNoStoreMessage(city){
 function getPayloadStore(index){
     var payload = {};
     payload.type = "OTHER_STORES";
-    stores.splice(0,1);
     payload.data = index;
     
     return payload;
