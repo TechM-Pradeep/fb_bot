@@ -206,7 +206,8 @@ function posttitle(ampval1,ampval2){
             QuickReply(sender);
           }
     else{   
-            console.log("@@@ "+event.postback.payload);
+            var payload = decodeURI(event.postback.payload);
+            console.log("@@@ "+payload);
             var postback_type = event.postback.payload.type;
             if(postback_type != undefined && postback_type == "OTHER_STORES"){
                 showMoreStores(sender, event.postback.payload, token);
