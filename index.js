@@ -9,7 +9,7 @@ var constants = require('./constants.js');
 var clearRequire = require('clear-require');
 var secondCardMessage = require('./parser/secondCard.js');
 var globalSearchParser = require('./parser/globalSearchParser.js');
-
+var store = require('./store.js');
  
 var zipcode=constants.zipcity;
 var zip;
@@ -279,7 +279,6 @@ module.exports.zip1=zip;
 var storenames = require('./parser/storeparser.js');
 var urlGenerator = require('./url/url_gen.js');
 var rest_util = require('./network/rest_util.js');
-var store = require('./store.js');
 var NETWORK_CONSTANT = require('./network/network_constant.js');
 const EventEmitter = require('events');
 var urlData = urlGenerator.getlocation();
