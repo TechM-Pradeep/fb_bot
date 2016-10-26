@@ -39,7 +39,7 @@ function getStoresTemplate(data) {
         
         var buttons = [];
         var buttonObject1 = {};
-        var map_url = "http://maps.google.com/?saddr="+firstStore.current_geolocation+"&daddr="+firstStore.geolocaton;
+        var map_url = "http://maps.google.com/?saddr="+stores.data.current_geolocation+"&daddr="+firstStore.geolocaton;
         buttonObject1.type = "web_url";
         buttonObject1.url = map_url;
         buttonObject1.title = "Directions";
@@ -103,7 +103,7 @@ function getStores(data) {
                 payload.stores = stores;
                 payload.page = 10;
                 payload.total_length = stores.length;
-                payload.current_geolocation = data.origin.lat+","+data.origin.lon
+                payload.current_geolocation = data.origin.lat+","+data.origin.lon;
 
                 var msg = {};
                 msg.status = "STORE_FOUND";
