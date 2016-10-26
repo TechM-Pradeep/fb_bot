@@ -165,8 +165,9 @@ function getOtherStores(data, payload){
             
             console.log("storesInRange "+storesInRange.length);
             console.log("nextindex "+nextIndex);
+            payload.index = nextIndex;
             var otherStoresTemplate = getOtherStoresTemplate(storesInRange, payload,storesData);
-            
+            //console.log("@@@ "+JSON.stringify(otherStoresTemplate));
             return otherStoresTemplate;
             
         }
@@ -176,32 +177,6 @@ function getOtherStores(data, payload){
 }
 
 function getOtherStoresTemplate(storesInRange, load,stores) {
-    /*var messageData = {
-     "attachment":{
-     "type":"template",
-     "payload":{
-     "template_type":"generic",
-     "elements":[
-     {
-     "title":"Welcome to Peter\'s Hats",
-     "subtitle":"pradeep"
-     }
-     {
-     "title":"Welcome to Peter\'s Hats",
-     "subtitle":"pradeep",
-     "buttons":[
-     {
-     "type":"web_url",
-     "url":"https://petersfancybrownhats.com",
-     "title":"load more"
-     },
-     ]
-     }
-     ]
-     }
-     }
-     }*/
-
     var elements = [];
     for (var i in storesInRange) {
        var store = storesInRange[i];
@@ -214,7 +189,13 @@ function getOtherStoresTemplate(storesInRange, load,stores) {
         
         var buttons = [];
         buttons.push(buttonObject1);
-        
+        if (i == (storesInRange.length - 1)) {
+            var buttonObject2 = {};
+            buttonObject2.type = "postback";
+            buttonObject2.title = "Load more";
+            buttonObject2.payload = load;
+            buttons.push(buttonObject2);
+        }
         var element = {};
         element.title = store.name;
         element.subtitle = store.address;
