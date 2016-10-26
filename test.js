@@ -15,7 +15,7 @@ module.exports = {
 
 }
 
-//data();
+data();
 function data(){
     fs.readFile('./stores.json', 'utf8', function (err,data) {
       if (err) {
@@ -46,7 +46,7 @@ function getStoresTemplate(data) {
         
         var otherStorePayLoad = getPayloadStore(stores.data.stores);
         otherStorePayLoad = encodeURI(JSON.stringify(otherStorePayLoad));
-        console.log("@@@ "+otherStorePayLoad);
+        console.log("@@@ "+otherStorePayLoad.length);
         var buttonObject2 = {};
         buttonObject2.type = "postback";
         buttonObject2.title = "Other Stores";

@@ -15,7 +15,7 @@ var getlocation =function (){
 
 	var zippass= index.zip1;
 	var url1='/apis/maps/v2/locator/search/query.json?';
-  var url2='&max=150&poi_types=pos&radius=10';
+  var url2='&max=10&poi_types=pos&radius=10';
 
 	var url = "https://www.att.com" + url1 + "q=" + zippass + url2 ;
 
