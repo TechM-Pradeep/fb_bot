@@ -283,10 +283,10 @@ class NetworkEventListener extends EventEmitter {}
 const networkListener = new NetworkEventListener();
 networkListener.on(NETWORK_CONSTANT.ON_SUCCESS, function(response) {
 var template = test.getStoresTemplate(response);
-console.log(JSON.stringify(template));
+console.log("temp: "+JSON.stringify(template));
 //sendTextMessage(sender, storenames.errorcode);*/
 var data2=  storenames.parse1(response);
-
+console.log("data2: "+JSON.stringify(data2));
 if(!data2[0]>0){
 
 sendTextMessage(sender, storenames.errorcode)
@@ -294,7 +294,6 @@ sendTextMessage(sender, storenames.errorcode)
 
 else{
 var struct= data2[1];
-console.log(JSON.stringify(struct));
 postStore(sender,struct); 
 }
 
