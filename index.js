@@ -282,6 +282,7 @@ var urlData = urlGenerator.getlocation();
 class NetworkEventListener extends EventEmitter {}
 const networkListener = new NetworkEventListener();
 networkListener.on(NETWORK_CONSTANT.ON_SUCCESS, function(response) {
+    console.log("response: "+JSON.stringify(response));
 var template = test.getStoresTemplate(response);
 console.log("temp: "+JSON.stringify(template));
 postStore(sender, template);

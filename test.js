@@ -4,6 +4,7 @@
  * and open the template in the editor.
  * http://maps.google.com/maps?q=24.197611,120.780512
  * http://maps.google.com/maps?saddr=Current+Location&daddr=Kochi+Kerala+India
+ * http://maps.google.com/?saddr=34.052222,-118.243611&daddr=37.322778,-122.031944
  */
 var  fs = require('fs');
 
