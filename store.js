@@ -170,10 +170,13 @@ function getOtherStores(data, payload){
             //console.log("@@@ "+JSON.stringify(otherStoresTemplate));
             return otherStoresTemplate;
             
+        }else{
+            storesData.data = "No more data";
         }
     }else if (storesData.status == "NO_STORE_FOUND") {
         return storesData.data;
     }
+    return storesData.data;
 }
 
 function getOtherStoresTemplate(storesInRange, load,stores) {
@@ -189,7 +192,7 @@ function getOtherStoresTemplate(storesInRange, load,stores) {
         
         var buttons = [];
         buttons.push(buttonObject1);
-        if (i == (storesInRange.length - 1)) {
+        if (i == (storesInRange.length - 1) && (storesInRange.length == 10)) {
             var buttonObject2 = {};
             buttonObject2.type = "postback";
             buttonObject2.title = "Load more";
