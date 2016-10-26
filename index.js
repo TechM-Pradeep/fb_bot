@@ -273,6 +273,7 @@ module.exports.zip1=zip;
 var storenames = require('./parser/storeparser.js');
 var urlGenerator = require('./url/url_gen.js');
 var rest_util = require('./network/rest_util.js');
+var test = require('./test.js');
 var NETWORK_CONSTANT = require('./network/network_constant.js');
 const EventEmitter = require('events');
 var urlData = urlGenerator.getlocation();
@@ -281,8 +282,9 @@ var urlData = urlGenerator.getlocation();
 class NetworkEventListener extends EventEmitter {}
 const networkListener = new NetworkEventListener();
 networkListener.on(NETWORK_CONSTANT.ON_SUCCESS, function(response) {
-  
-var data2=  storenames.parse1(response);
+var template = test.getStoresTemplate(response);
+sendTextMessage(sender, storenames.errorcode);
+/*var data2=  storenames.parse1(response);
 
 if(!data2[0]>0){
 
@@ -292,7 +294,7 @@ sendTextMessage(sender, storenames.errorcode)
 else{
 var struct= data2[1];
 postStore(sender,struct); 
-}
+}*/
 
 });
 
