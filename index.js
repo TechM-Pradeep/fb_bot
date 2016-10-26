@@ -206,7 +206,7 @@ function posttitle(ampval1,ampval2){
             QuickReply(sender);
           }
     else{   
-            var payload = decodeURI(event.postback.payload);
+            var payload = JSON.parse(decodeURI(event.postback.payload));
             console.log("@@@ "+payload);
             var postback_type = payload.type;
             if(postback_type != undefined && postback_type == "OTHER_STORES"){
