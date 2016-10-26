@@ -14,7 +14,7 @@ module.exports = {
 
 }
 
-data();
+//data();
 function data(){
     fs.readFile('./stores.json', 'utf8', function (err,data) {
       if (err) {
