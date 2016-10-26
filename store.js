@@ -11,6 +11,9 @@ var  fs = require('fs');
 module.exports = {
     getStoresTemplate : function (data) {
         return getStoresTemplate(data);
+    },
+    getOtherStoreTemplate : function (data) {
+        return getOtherStoreTemplate(data, payload);
     }
 
 }
@@ -22,10 +25,13 @@ function data(){
         return console.log(err);
       }
       var payload = getStoresTemplate(data);
+      var payload1 = {"type":"OTHER_STORES","index":30,"zipcode":"75080"}
+      getOtherStoreTemplate(data,payload1);
       //console.log(JSON.stringify(payload));
     });
     
 }
+
 function getStoresTemplate(data) {
     var stores = getStores(data);
     if (stores.status == "STORE_FOUND") {
@@ -45,7 +51,7 @@ function getStoresTemplate(data) {
         buttonObject1.title = "Directions";
         
         var otherStorePayLoad = getPayloadStore(0,stores.data.origin_postal);
-       console.log("@@@ "+JSON.stringify(otherStorePayLoad));
+       //console.log("@@@ "+JSON.stringify(otherStorePayLoad));
         otherStorePayLoad = encodeURI(JSON.stringify(otherStorePayLoad));
        
         var buttonObject2 = {};
@@ -134,8 +140,34 @@ function getNoStoreMessage(city){
 function getPayloadStore(index, zipcode){
     var payload = {};
     payload.type = "OTHER_STORES";
-    payload.data = index;
+    payload.index = index;
     payload.zipcode = zipcode;
     
     return payload;
+}
+
+function getOtherStoreTemplate(data, payload){
+    var storesData = getStores(data);
+    if (storesData.status == "STORE_FOUND") {
+        var stores = storesData.data.stores;
+        var lastIndex = payload.index;
+        console.log("lastIndex "+lastIndex);
+        var storesLen = stores.length;
+        console.log("storesLen "+storesLen);
+        if( storesLen > lastIndex){
+            var nextIndex = lastIndex + 10;
+            console.log("nextIndex "+nextIndex);
+            if(nextIndex > storesLen){
+                nextIndex = storesLen;
+                console.log("range > storesLen "+nextIndex);
+            }
+            var storesInRange = stores.slice(lastIndex,nextIndex);
+            
+            console.log("storesInRange "+storesInRange.length);
+            console.log("nextindex "+nextIndex);
+            //console.log("@@@ "+JSON.stringify(stores));
+        }
+    }else if (storesData.status == "NO_STORE_FOUND") {
+        return storesData.data;
+    }
 }

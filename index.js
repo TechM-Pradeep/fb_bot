@@ -211,6 +211,7 @@ function posttitle(ampval1,ampval2){
             var postback_type = payload.type;
             if(postback_type != undefined && postback_type == "OTHER_STORES"){
                 showMoreStores(sender, event.postback.payload, token);
+                sendStoreLocator(sender,payload.zipcode,payload)
             }else{
                 sendTextMessage(sender, event.postback.payload, token);
             }
@@ -270,7 +271,7 @@ function sendTextMessage(sender, text) {
 
 
 
-function sendStoreLocator(sender ,zip) {
+function sendStoreLocator(sender ,zip, otherStorePayload) {
 
 clearRequire('./parser/storeparser.js');
 
@@ -287,10 +288,15 @@ var urlData = urlGenerator.getlocation();
 class NetworkEventListener extends EventEmitter {}
 const networkListener = new NetworkEventListener();
 networkListener.on(NETWORK_CONSTANT.ON_SUCCESS, function(response) {
+    
+        if (otherStorePayload == undefined){
 //console.log("response: "+JSON.stringify(response));
-var template = store.getStoresTemplate(response);
+        var template = store.getStoresTemplate(response);
 //console.log("temp: "+JSON.stringify(template));
-postStore(sender, template);
+                postStore(sender, template);
+        }else{
+            console.log("@@@ pradeep");
+        }
 /*var data2=  storenames.parse1(response);
 console.log("data2: "+JSON.stringify(data2));
 if(!data2[0]>0){
