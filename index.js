@@ -285,7 +285,7 @@ networkListener.on(NETWORK_CONSTANT.ON_SUCCESS, function(response) {
 var template = test.getStoresTemplate(response);
 console.log("temp: "+JSON.stringify(template));
 postStore(sender, template);
-var data2=  storenames.parse1(response);
+/*var data2=  storenames.parse1(response);
 console.log("data2: "+JSON.stringify(data2));
 if(!data2[0]>0){
 
@@ -295,7 +295,7 @@ sendTextMessage(sender, storenames.errorcode)
 else{
 var struct= data2[1];
 postStore(sender,struct); 
-}
+}*/
 
 });
 
