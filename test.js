@@ -38,8 +38,9 @@ function getStoresTemplate(data) {
         
         var buttons = [];
         var buttonObject1 = {};
+        var map_url = "http://maps.google.com/maps?q="+firstStore.geolocaton;
         buttonObject1.type = "web_url";
-        buttonObject1.url = "http://www.androidcentral.com/sites/androidcentral.com/files/styles/xlarge/public/article_images/2015/12/att-store-two-signs-hero.jpg?itok=dOdakNe0";
+        buttonObject1.url = map_url;
         buttonObject1.title = "Directions: Store 1";
         
         var buttonObject2 = {};
@@ -93,7 +94,7 @@ function getStores(data) {
                     var address = storeJson.address1 + "" + (storeJson.address2 != undefined ? storeJson.address2 : "") + " " + store.region + " " + storeJson.city;
                     store.address = address;
                     store.postal = storeJson.postal;
-                    store.geofence = storeJson.lat + "," + storeJson.lon;
+                    store.geolocaton = storeJson.lat + "," + storeJson.lon;
                     store.url = storeJson.url;
                     stores.push(store);
                 }
