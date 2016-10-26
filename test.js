@@ -45,7 +45,7 @@ function getStoresTemplate(data) {
         var buttonObject2 = {};
         buttonObject2.type = "postback";
         buttonObject2.title = "Other Stores";
-        buttonObject2.payload = "";
+        buttonObject2.payload = "Please Enter Your ZipCode";
         
         var buttonObject3 = {};
         buttonObject3.type = "postback";
