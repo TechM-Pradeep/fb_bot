@@ -18,14 +18,14 @@ module.exports = {
 
 }
 
-//data();
+data();
 function data(){
     fs.readFile('./stores.json', 'utf8', function (err,data) {
       if (err) {
         return console.log(err);
       }
       var payload = getStoresTemplate(data);
-      var payload1 = {"type":"OTHER_STORES","index":33,"zipcode":"75080"}
+      var payload1 = {"type":"OTHER_STORES","index":31,"zipcode":"75080"}
       getOtherStores(data,payload1);
       //console.log(JSON.stringify(payload));
     });
@@ -50,7 +50,7 @@ function getStoresTemplate(data) {
         buttonObject1.url = map_url;
         buttonObject1.title = "Directions";
         
-        var otherStorePayLoad = getPayloadStore(1,stores.data.origin_postal);
+        var otherStorePayLoad = getPayloadStore(1,stores.data.origin_postal,stores.total_length);
        //console.log("@@@ "+JSON.stringify(otherStorePayLoad));
         otherStorePayLoad = encodeURI(JSON.stringify(otherStorePayLoad));
        
@@ -113,7 +113,6 @@ function getStores(data) {
                 }
                 var payload = {}
                 payload.stores = stores;
-                payload.page = 10;
                 payload.total_length = stores.length;
                 payload.current_geolocation = data.origin.lat+","+data.origin.lon;
                 payload.origin_postal = data.origin.postal;
@@ -139,11 +138,12 @@ function getNoStoreMessage(city){
     return msg;
 }
 
-function getPayloadStore(index, zipcode){
+function getPayloadStore(index, zipcode, total_length){
     var payload = {};
     payload.type = "OTHER_STORES";
     payload.index = index;
     payload.zipcode = zipcode;
+    payload.total_length = total_length;
     
     return payload;
 }
@@ -172,7 +172,7 @@ function getOtherStores(data, payload){
             console.log("endIndex "+nextIndex);
             var storesInRange = stores.slice(lastIndex,nextIndex);
             
-            console.log("storesInRange "+storesInRange.length);
+            console.log("stores length "+storesInRange.length);
             console.log("nextindex "+nextIndex);
             payload.index = nextIndex;
             var otherStoresTemplate = getOtherStoresTemplate(storesInRange, payload,storesData);
@@ -201,7 +201,7 @@ function getOtherStoresTemplate(storesInRange, load,stores) {
         
         var buttons = [];
         buttons.push(buttonObject1);
-        if (i == (storesInRange.length - 1) && (storesInRange.length == 10)) {
+        if (i == (storesInRange.length - 1) && (storesInRange.length == 10) && (load.index != load.total_length)) {
             var buttonObject2 = {};
             buttonObject2.type = "postback";
             buttonObject2.title = "Load more";
