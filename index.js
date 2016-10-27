@@ -518,7 +518,8 @@ function QuickReply(sender) {
     }
   })
 }
-
+/*TODO: implemenation of this method is repeating in  QuickReply,sendSecondCard,postProduct,sendTextMessage
+[Need to discuss with team]*/
 function showMoreStores(sender, payload, token){
 request({
 url: constants.FB_Message,
