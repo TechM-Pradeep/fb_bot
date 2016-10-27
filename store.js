@@ -50,7 +50,7 @@ function getStoresTemplate(data) {
         buttonObject1.url = map_url;
         buttonObject1.title = "Directions";
         
-        var otherStorePayLoad = getPayloadStore(0,stores.data.origin_postal);
+        var otherStorePayLoad = getPayloadStore(1,stores.data.origin_postal);
        //console.log("@@@ "+JSON.stringify(otherStorePayLoad));
         otherStorePayLoad = encodeURI(JSON.stringify(otherStorePayLoad));
        
@@ -155,7 +155,6 @@ function getOtherStores(data, payload){
         var storesLen = stores.length;
         console.log("storesLen "+storesLen);
         if( storesLen > lastIndex){
-            ++lastIndex;
             var nextIndex = lastIndex + 10;
             console.log("nextIndex "+nextIndex);
             if(nextIndex > storesLen){
