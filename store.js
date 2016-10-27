@@ -25,7 +25,7 @@ function data(){
         return console.log(err);
       }
       var payload = getStoresTemplate(data);
-      var payload1 = {"type":"OTHER_STORES","index":0,"zipcode":"75080"}
+      var payload1 = {"type":"OTHER_STORES","index":33,"zipcode":"75080"}
       getOtherStores(data,payload1);
       //console.log(JSON.stringify(payload));
     });
@@ -155,12 +155,15 @@ function getOtherStores(data, payload){
         var storesLen = stores.length;
         console.log("storesLen "+storesLen);
         if( storesLen > lastIndex){
+            ++lastIndex;
             var nextIndex = lastIndex + 10;
             console.log("nextIndex "+nextIndex);
             if(nextIndex > storesLen){
                 nextIndex = storesLen;
                 console.log("range > storesLen "+nextIndex);
             }
+            console.log("startIndex "+lastIndex);
+            console.log("endIndex "+nextIndex);
             var storesInRange = stores.slice(lastIndex,nextIndex);
             
             console.log("storesInRange "+storesInRange.length);

@@ -294,7 +294,6 @@ networkListener.on(NETWORK_CONSTANT.ON_SUCCESS, function(response) {
 //console.log("temp: "+JSON.stringify(template));
                 postStore(sender, template);
         }else{
-            console.log("@@@ pradeep");
             var template = store.getOtherStores(response,otherStorePayload);
             console.log("@@@ "+JSON.stringify(template));
             showMoreStores(sender, template, token);
@@ -519,64 +518,6 @@ function QuickReply(sender) {
 }
 
 function showMoreStores(sender, payload, token){
-        var messageData = {
-"attachment":{
-"type":"template",
-        "payload":{
-        "template_type":"generic",
-        "elements":[
-          {
-            "title":"Welcome to Peter\'s Hats",
-            "subtitle":"pradeep"
-          },
-          {
-            "title":"Welcome to Peter\'s Hats",
-            "subtitle":"pradeep"
-          },
-          {
-            "title":"Welcome to Peter\'s Hats",
-            "subtitle":"pradeep"
-          },
-          {
-            "title":"Welcome to Peter\'s Hats",
-            "subtitle":"pradeep"
-          },
-          {
-            "title":"Welcome to Peter\'s Hats",
-            "subtitle":"pradeep"
-          },
-          {
-            "title":"Welcome to Peter\'s Hats",
-            "subtitle":"pradeep"
-          },
-          {
-            "title":"Welcome to Peter\'s Hats",
-            "subtitle":"pradeep"
-          },
-          {
-            "title":"Welcome to Peter\'s Hats",
-            "subtitle":"pradeep"
-          },
-          {
-            "title":"Welcome to Peter\'s Hats",
-            "subtitle":"pradeep"
-          },
-          {
-            "title":"Welcome to Peter\'s Hats",
-            "subtitle":"pradeep",
-            "buttons":[
-              {
-                "type":"web_url",
-                "url":"https://petersfancybrownhats.com",
-                "title":"load more"
-              },
-            ]
-          }
-        ]
-      }
-}
-}
-
 request({
 url: constants.FB_Message,
         qs: {access_token:token},
