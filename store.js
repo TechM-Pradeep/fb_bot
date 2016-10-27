@@ -59,10 +59,12 @@ function getStoresTemplate(data) {
         buttonObject2.title = "Other Stores";
         buttonObject2.payload = otherStorePayLoad;
         
+        var reenterZipcodePayload = getReenterZipCodePayload();
+        reenterZipcodePayload = encodeURI(JSON.stringify(reenterZipcodePayload));
         var buttonObject3 = {};
         buttonObject3.type = "postback";
         buttonObject3.title = "Re-Enter Zip";
-        buttonObject3.payload = "Please Enter Your ZipCode";
+        buttonObject3.payload = reenterZipcodePayload;
         
         buttons.push(buttonObject1);
         buttons.push(buttonObject2);
@@ -145,7 +147,12 @@ function getPayloadStore(index, zipcode){
     
     return payload;
 }
-
+function getReenterZipCodePayload(){
+    var payload = {};
+    payload.type = "REENTER_ZIPCODE";
+    payload.data = "Please Enter Your ZipCode";
+    return payload;
+}
 function getOtherStores(data, payload){
     var storesData = getStores(data);
     if (storesData.status == "STORE_FOUND") {

@@ -211,6 +211,8 @@ function posttitle(ampval1,ampval2){
             var postback_type = payload.type;
             if(postback_type != undefined && postback_type == "OTHER_STORES"){
                 sendStoreLocator(sender,payload.zipcode,payload)
+            }else if(postback_type != undefined && postback_type == "REENTER_ZIPCODE"){
+                sendTextMessage(sender, payload.data, token);
             }else{
                 sendTextMessage(sender, event.postback.payload, token);
             }
